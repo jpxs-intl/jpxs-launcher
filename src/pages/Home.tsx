@@ -1,9 +1,10 @@
-import Sidebar from "../Sidebar";
+import Sidebar from "../components/Sidebar";
+
 export default function () {
   return (
     <>
       <Sidebar />
-      <section>whats up</section>
+      <section></section>
     </>
   );
 }
