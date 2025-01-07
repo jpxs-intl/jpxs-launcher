@@ -1,0 +1,28 @@
+on:
+  workflow_dispatch:
+jobs:
+  build-tauri-mac:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-all-crates: "true"
+          shared-key: "mac"
+      - name: install frontend dependencies
+        run: npm install
+      - name: build tauri app
+        run: npm run tauri build
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mac
+          path: src-tauri/target/release/bundle/macos/jpxs-launcher.app
