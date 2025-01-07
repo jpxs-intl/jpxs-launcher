@@ -11,6 +11,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4.0.0
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
@@ -18,9 +20,9 @@ jobs:
           cache-all-crates: "true"
           shared-key: "mac"
       - name: install frontend dependencies
-        run: npm install
+        run: pnpm install
       - name: build tauri app
-        run: npm run tauri build
+        run: pnpm run tauri build
       - name: upload artifact
         uses: actions/upload-artifact@v3
         with:
