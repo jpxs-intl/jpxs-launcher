@@ -32,7 +32,6 @@ const [servers, { refetch }] = createResource(async () => {
   ).json();
   serverList
     .filter((server) => !peopleWeHate.includes(server.address))
-    .sort((a, b) => a.players - b.players)
     .map((server) => {
       server.name = `${server.emoji} ${server.name}`;
 
@@ -44,6 +43,7 @@ const [servers, { refetch }] = createResource(async () => {
         server.icon =
           server.icon || "https://assets.jpxs.io/img/default/subrosa.png";
       }
+      return server;
     });
   return serverList;
 });
@@ -83,17 +83,26 @@ export default function ServerList() {
           </button>
         </div>
         <div class="grid gap-x-8 gap-y-2 xl:gap-y-4 grid-cols-1 xl:grid-cols-2  ">
-          <For each={servers()}>
-            {(server: server) => {
-              if (isFreeWeekend() && server.masterServer === "jpxs") {
+          <For
+            each={servers()
+              ?.filter(
+                (server) =>
+                  (isFreeWeekend() && server.masterServer === "jpxs") ||
+                  (!isFreeWeekend() && server.masterServer === "vanilla")
+              )
+              .sort((a, b) => b.players - a.players)}
+          >
+            {
+              (server: server) => <Server server={server} />
+              /*if (isFreeWeekend() && server.masterServer === "jpxs") {
                 return <Server server={server}></Server>;
               } else if (
                 !isFreeWeekend() &&
                 server.masterServer === "vanilla"
               ) {
                 return <Server server={server}></Server>;
-              }
-            }}
+              }*/
+            }
           </For>
         </div>
       </section>
