@@ -6,7 +6,7 @@ export default function () {
     <>
       <Sidebar />
       <section class="text-center mx-64">
-        <h1 class="font-bold text-4xl text-red-500 my-8">Error</h1>
+        <h1 class="font-bold text-4xl text-red-500 py-8">Error</h1>
         <p class="text-2xl mb-8">We couldn't find what you were looking for!</p>
         <A
           href="/"

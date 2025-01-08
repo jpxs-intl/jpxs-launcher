@@ -3,14 +3,16 @@ use std::path::Path;
 use std::fs;
 use serde::{Deserialize, Serialize};
 
-use crate::instance_manager::instance;
+use crate::instance_manager::Instance;
 
 #[derive(Serialize, Deserialize)]
 pub struct Settings {
     pub install_location: PathBuf,
-    pub instances: Vec<instance>
+    pub instances: Vec<Instance>,
+    pub settings_version: i32
 }
 
+const SETTINGS_VERSION: i32 = 1;
 #[cfg(target_os = "windows")]
 const HOMEDIR: &str = "APPDATA";
 
@@ -38,7 +40,7 @@ pub fn get_settings_path() -> PathBuf {
 
 pub fn check_settings_exist() {
     if !Path::exists(&get_settings_path()) {
-        // implement saving once settings struct is done
+        save_settings(Settings { install_location: get_base_dir().join("instances"), instances: vec![], settings_version: SETTINGS_VERSION }).expect("Failed Creating Settings");
     }
 }
 
@@ -55,6 +57,9 @@ pub fn get_settings() -> Result<Settings, serde_json::Error> {
 pub fn save_settings(settings: Settings) -> Result<(), std::io::Error> {
     let config = get_settings_path();
     let json = serde_json::to_string_pretty(&settings);
+    if !settings.install_location.exists() {
+        fs::create_dir(settings.install_location).expect("Failed Saving: Could not create Install Location Folder");
+    }
     println!("Saving");
     match fs::write(config, json.expect("Failed Saving: Malformed JSON")) {
         Ok(val) => {Ok(val)}

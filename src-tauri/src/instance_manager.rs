@@ -1,9 +1,9 @@
-use std::path::{PathBuf};
+use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 
-pub struct instance {
+pub struct Instance {
     pub name: String,
     pub version: i32,
     pub is_free_weekend: bool,

@@ -92,17 +92,7 @@ export default function ServerList() {
               )
               .sort((a, b) => b.players - a.players)}
           >
-            {
-              (server: server) => <Server server={server} />
-              /*if (isFreeWeekend() && server.masterServer === "jpxs") {
-                return <Server server={server}></Server>;
-              } else if (
-                !isFreeWeekend() &&
-                server.masterServer === "vanilla"
-              ) {
-                return <Server server={server}></Server>;
-              }*/
-            }
+            {(server: server) => <Server server={server} />}
           </For>
         </div>
       </section>

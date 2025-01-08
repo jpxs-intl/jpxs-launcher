@@ -3,6 +3,7 @@ import "./App.css";
 import NotFound from "./pages/404";
 import Home from "./pages/Home";
 import ServerList from "./pages/ServerList";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Router>
         <Route path="/" component={Home} />
         <Route path="/live" component={ServerList} />
+        <Route path="/settings" component={Settings} />
         <Route path="*404" component={NotFound} />
       </Router>
     </main>

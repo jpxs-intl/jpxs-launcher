@@ -17,6 +17,9 @@ importers:
       '@tauri-apps/plugin-opener':
         specifier: ^2
         version: 2.2.3
+      solid-heroicons:
+        specifier: ^3.2.4
+        version: 3.2.4(solid-js@1.9.3)
       solid-js:
         specifier: ^1.9.3
         version: 1.9.3
@@ -943,6 +946,11 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
+
+  solid-heroicons@3.2.4:
+    resolution: {integrity: sha512-u6BMdFLvkJnvUGYzdFcWp1wvJ4hb9Y1zd3AbZ9D3bUmmiy9jBzNZX+RcqBCI2EKRvdQwAb1UB9bkESfqfhayDg==}
+    peerDependencies:
+      solid-js: '>= ^1.2.5'
 
   solid-js@1.9.3:
     resolution: {integrity: sha512-5ba3taPoZGt9GY3YlsCB24kCg0Lv/rie/HTD4kG6h4daZZz7+yK02xn8Vx8dLYBc9i6Ps5JwAbEiqjmKaLB3Ag==}
@@ -1874,6 +1882,10 @@ snapshots:
   shebang-regex@3.0.0: {}
 
   signal-exit@4.1.0: {}
+
+  solid-heroicons@3.2.4(solid-js@1.9.3):
+    dependencies:
+      solid-js: 1.9.3
 
   solid-js@1.9.3:
     dependencies:

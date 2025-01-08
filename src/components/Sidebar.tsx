@@ -1,6 +1,13 @@
 import { A } from "@solidjs/router";
-
-function Button(props: { class?: string; name: string; href: string }) {
+import { Icon } from "solid-heroicons";
+import { cog_6Tooth } from "solid-heroicons/outline";
+import { JSXElement } from "solid-js";
+function Button(props: {
+  class?: string;
+  name?: string;
+  href: string;
+  children?: JSXElement;
+}) {
   return (
     <A
       href={props.href}
@@ -10,6 +17,7 @@ function Button(props: { class?: string; name: string; href: string }) {
       end
     >
       {props.name}
+      {props.children}
     </A>
   );
 }
@@ -21,6 +29,11 @@ export default function Sidebar() {
       </h1>
       <Button href="/" name="Home" />
       <Button href="/live" name="Server List" />
+      <div class="fixed bottom-0 left-0 mx-4">
+        <Button href="/settings">
+          <Icon path={cog_6Tooth} class="w-8 h-8"></Icon>
+        </Button>
+      </div>
     </section>
   );
 }
