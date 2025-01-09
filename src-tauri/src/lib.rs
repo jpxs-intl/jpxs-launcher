@@ -1,3 +1,4 @@
+use instance_manager::{download_instance, Instance};
 use settings::{get_settings, save_settings, Settings};
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -14,6 +15,11 @@ fn save_settings_command(settings: Settings) -> Result<(), String> {
     save_settings(settings).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+async fn download_instance_command(instance: Instance) -> Result<(), String> {
+    download_instance(instance).await.map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -21,7 +27,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             get_settings_command,
-            save_settings_command
+            save_settings_command,
+            download_instance_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
