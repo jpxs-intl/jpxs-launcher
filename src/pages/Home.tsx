@@ -1,4 +1,5 @@
 import Sidebar from "../components/Sidebar";
+import { InstanceManager } from "../InstanceManager";
 
 export default function () {
   return (
@@ -15,6 +16,18 @@ export default function () {
           <p class="ml-8 mt-4 font-light text-subtext0 text-sm">
             Why not play some more?
           </p>
+          <button
+            onClick={() => {
+              InstanceManager.addInstance({
+                name: "balls",
+                version: 38,
+                isFreeWeekend: true,
+              });
+            }}
+          >
+            {" "}
+            make instance lol{" "}
+          </button>
         </div>
       </section>
     </>
