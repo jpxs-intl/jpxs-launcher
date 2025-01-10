@@ -28,6 +28,7 @@ export default function Sidebar() {
         <span class="text-orange-400 font-bold">JPXS</span> Launcher
       </h1>
       <Button href="/" name="Home" />
+      <Button href="/instances" name="Instances" />
       <Button href="/live" name="Server List" />
       <div class="fixed bottom-0 left-0 mx-4">
         <Button href="/settings">
