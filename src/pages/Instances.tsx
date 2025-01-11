@@ -15,6 +15,8 @@ import { invoke } from "@tauri-apps/api/core";
 const buildNumbers = new Map<number, string>([
   [38, "f"],
   [37, "c"],
+  [36, "b"],
+  [34, "b"],
 ]);
 
 export function InstanceComponent(props: {

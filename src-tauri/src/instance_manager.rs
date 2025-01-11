@@ -43,7 +43,12 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
     zip_extensions::zip_extract(&(path.clone()), &instance.path).expect("Failed to unzip file");
 
     #[cfg(target_os = "linux")] {
-        let file = File::open(instance.path.join("free-weekend-".to_owned() + &instance.version.to_string()).join("subrosa.x64")).expect("failed to set executable bit");
+        let file: File;
+        if instance.version == 38 || instance.version == 37 {
+            file = File::open(instance.path.join("free-weekend-".to_owned() + &instance.version.to_string()).join("subrosa.x64")).expect("failed to set executable bit");
+        } else {
+            file = File::open(instance.path.join("subrosa.x64")).expect("failed to set executable bit");
+        }
         let mut perms = file.metadata().expect("failed to set executable bit").permissions();
         perms.set_mode(0o775);
         file.set_permissions(perms).expect("failed to set executable bit");
@@ -60,8 +65,12 @@ pub fn open_instance(instance: Instance) {
     let game_exe = "./subrosa.exe";
     #[cfg(target_os = "linux")]
     let game_exe= "./subrosa.x64";
-
-    let path = instance.path.join("free-weekend-".to_owned() + &instance.version.to_string());
+    let path: PathBuf;
+    if instance.version == 38 || instance.version == 37 {
+        path = instance.path.join("free-weekend-".to_owned() + &instance.version.to_string());
+    } else {
+        path = instance.path;
+    }
     let exe_path = path.join(game_exe);
     Command::new(exe_path).current_dir(path).spawn().expect("error opening file");
 }
