@@ -1,4 +1,6 @@
-use std::{cmp::min, os::unix::fs::PermissionsExt, process::Command};
+use std::{cmp::min, os, process::Command};
+#[cfg(target_os = "linux")]
+use os::unix::fs::PermissionsExt;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter};
 use std::{env::temp_dir, fs::File, io::Write, path::PathBuf};
@@ -40,14 +42,12 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
     //std::fs::write(&path, val).expect("Failed to write zip to disk");
     zip_extensions::zip_extract(&(path.clone()), &instance.path).expect("Failed to unzip file");
 
-    #[cfg(target_os = "linux")]
-    let file = File::open(instance.path.join("free-weekend-".to_owned() + &instance.version.to_string()).join("subrosa.x64")).expect("failed to set executable bit");
-    #[cfg(target_os = "linux")]
-    let mut perms = file.metadata().expect("failed to set executable bit").permissions();
-    #[cfg(target_os = "linux")]
-    perms.set_mode(0o775);
-    #[cfg(target_os = "linux")]
-    file.set_permissions(perms).expect("failed to set executable bit");
+    #[cfg(target_os = "linux")] {
+        let file = File::open(instance.path.join("free-weekend-".to_owned() + &instance.version.to_string()).join("subrosa.x64")).expect("failed to set executable bit");
+        let mut perms = file.metadata().expect("failed to set executable bit").permissions();
+        perms.set_mode(0o775);
+        file.set_permissions(perms).expect("failed to set executable bit");
+    }
     Ok(())
 }
 
