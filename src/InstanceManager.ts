@@ -46,6 +46,22 @@ class InstanceManagerConstructor {
   onInstanceChange(callback: (instances: Instance[]) => undefined) {
     this.listeners.push(callback);
   }
+
+  deleteInstance(instance: Instance) {
+    if (this.settings) {
+      this.instances.splice(
+        this.instances.findIndex((val) => instance.name === val.name),
+        1
+      );
+      this.settings.instances = this.instances;
+      this.listeners.forEach((val) => {
+        val(this.instances);
+      });
+      invoke("delete_instance_command", {
+        instance: convertInstanceToRust(instance),
+      });
+    }
+  }
 }
 
 const InstanceManager = new InstanceManagerConstructor();

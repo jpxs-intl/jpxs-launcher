@@ -24,10 +24,7 @@ export default function () {
                 isFreeWeekend: true,
               });
             }}
-          >
-            {" "}
-            make instance lol{" "}
-          </button>
+          ></button>
         </div>
       </section>
     </>
