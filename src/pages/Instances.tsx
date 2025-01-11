@@ -2,13 +2,18 @@ import { Icon } from "solid-heroicons";
 import Sidebar from "../components/Sidebar";
 import { trash, plus } from "solid-heroicons/outline";
 import { createEffect, createSignal, For } from "solid-js";
-import { Instance, SettingsManager } from "../SettingsManager";
+import {
+  convertInstanceToRust,
+  Instance,
+  SettingsManager,
+} from "../SettingsManager";
 import { InstanceManager } from "../InstanceManager";
 import freeweekend from "../assets/freeweekend.png";
 import subrosa from "../assets/subrosa.png";
 import { listen } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 const buildNumbers = new Map<number, string>([
-  [38, "e"],
+  [38, "f"],
   [37, "c"],
 ]);
 
@@ -24,9 +29,12 @@ export function InstanceComponent(props: {
       } transition-colors duration-100 px-4 py-2 rounded-xl flex flex-row gap-x-2`}
       onClick={() => {
         if (props.deleteMode) {
-          console.log(instance);
           InstanceManager.deleteInstance(instance);
           SettingsManager.saveSettings();
+        } else {
+          invoke("open_instance_command", {
+            instance: convertInstanceToRust(instance),
+          });
         }
       }}
     >

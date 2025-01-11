@@ -1,4 +1,4 @@
-use instance_manager::{delete_instance, download_instance, Instance};
+use instance_manager::{delete_instance, download_instance, open_instance, Instance};
 use settings::{get_settings, save_settings, Settings};
 use tauri::AppHandle;
 
@@ -14,6 +14,11 @@ fn get_settings_command() -> Result<Settings, String> {
 #[tauri::command]
 fn save_settings_command(settings: Settings) -> Result<(), String> {
     save_settings(settings).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn open_instance_command(instance: Instance) -> () {
+    open_instance(instance);
 }
 
 #[tauri::command]
@@ -34,6 +39,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_settings_command,
             save_settings_command,
+            open_instance_command,
             download_instance_command,
             delete_instance_command
         ])

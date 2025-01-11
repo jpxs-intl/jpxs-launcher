@@ -1,4 +1,4 @@
-use std::cmp::min;
+use std::{cmp::min, os::unix::fs::PermissionsExt, process::Command};
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter};
 use std::{env::temp_dir, fs::File, io::Write, path::PathBuf};
@@ -39,9 +39,29 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
     }
     //std::fs::write(&path, val).expect("Failed to write zip to disk");
     zip_extensions::zip_extract(&(path.clone()), &instance.path).expect("Failed to unzip file");
+
+    #[cfg(target_os = "linux")]
+    let file = File::open(instance.path.join("free-weekend-".to_owned() + &instance.version.to_string()).join("subrosa.x64")).expect("failed to set executable bit");
+    #[cfg(target_os = "linux")]
+    let mut perms = file.metadata().expect("failed to set executable bit").permissions();
+    #[cfg(target_os = "linux")]
+    perms.set_mode(0o775);
+    #[cfg(target_os = "linux")]
+    file.set_permissions(perms).expect("failed to set executable bit");
     Ok(())
 }
 
 pub async fn delete_instance(instance: Instance) {
     std::fs::remove_dir_all(instance.path).expect("Failed to delete instance");
+}
+
+pub fn open_instance(instance: Instance) {
+    #[cfg(target_os = "windows")]
+    let game_exe = "./subrosa.exe";
+    #[cfg(target_os = "linux")]
+    let game_exe= "./subrosa.x64";
+
+    let path = instance.path.join("free-weekend-".to_owned() + &instance.version.to_string());
+    let exe_path = path.join(game_exe);
+    Command::new(exe_path).current_dir(path).spawn().expect("error opening file");
 }
