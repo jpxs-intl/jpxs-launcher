@@ -30,6 +30,7 @@ export default function Sidebar() {
       <Button href="/" name="Home" />
       <Button href="/instances" name="Instances" />
       <Button href="/live" name="Server List" />
+      <Button href="/playersearch" name="Player Search" />
       <div class="fixed bottom-0 left-0 mx-4">
         <Button href="/settings">
           <Icon path={cog_6Tooth} class="w-8 h-8"></Icon>

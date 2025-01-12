@@ -2,11 +2,11 @@ import { createSignal, Show } from "solid-js";
 import Sidebar from "../components/Sidebar";
 import { InstanceManager } from "../InstanceManager";
 import { SettingsManager } from "../SettingsManager";
-import { InstanceComponent } from "./Instances";
 import { Icon } from "solid-heroicons";
 import { plus } from "solid-heroicons/outline";
 import { A } from "@solidjs/router";
 import { playerCount } from "./ServerList";
+import { InstanceComponent } from "../components/InstanceComponent";
 
 export default function () {
   const [lastPlayed, setLastPlayed] = createSignal<string | null>(null);

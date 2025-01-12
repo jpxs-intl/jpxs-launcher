@@ -26,7 +26,7 @@ export type server = {
   country: string;
 };
 
-const peopleWeHate = ["205.174.149.108"];
+const ignoreList = ["205.174.149.108"];
 
 const [servers, { refetch }] = createResource(async () => {
   let playercount = 0;
@@ -34,7 +34,7 @@ const [servers, { refetch }] = createResource(async () => {
     await fetch(`https://jpxs.io/api/servers`)
   ).json();
   serverList
-    .filter((server) => !peopleWeHate.includes(server.address))
+    .filter((server) => !ignoreList.includes(server.address))
     .map((server) => {
       server.name = `${server.emoji} ${server.name}`;
       playercount += server.players;
