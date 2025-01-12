@@ -17,16 +17,18 @@ jobs:
           version: 9.x
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
+      - run: cd src-tauri
       - uses: Swatinem/rust-cache@v2
         with:
           cache-all-crates: "true"
           shared-key: "mac"
+      - run: cd ..
       - name: install frontend dependencies
         run: pnpm install
       - name: build tauri app
         run: pnpm run tauri build
       - name: upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: mac
           path: src-tauri/target/release/bundle/macos/jpxs-launcher.app

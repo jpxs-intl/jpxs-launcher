@@ -25,7 +25,9 @@ class InstanceManagerConstructor {
 
   addInstance(instance: Instance) {
     if (this.settings) {
-      instance.path = `${this.settings.installLocation}/${instance.name}`;
+      if (!instance.path) {
+        instance.path = `${this.settings.installLocation}/${instance.name}`;
+      }
       this.instances.unshift(instance);
       this.settings.instances = this.instances;
       this.listeners.forEach((val) => {

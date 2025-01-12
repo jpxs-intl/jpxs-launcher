@@ -21,6 +21,18 @@ struct DownloadPacket {
     packets: u64
 }
 
+pub fn is_instance(path: PathBuf) -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    let exe_path = "./subrosa.exe";
+    #[cfg(target_os = "linux")]
+    let exe_path= "./subrosa.x64";
+    let exe = path.join(exe_path);
+    if exe.exists() {
+        return Ok(());
+    }
+    Err("This is not a valid game instance".to_owned())
+}
+
 pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(), reqwest::Error> {
     // base url for fw: https://assets.jpxs.io/freeweekend/
     let response = reqwest::get("https://assets.jpxs.io/freeweekend/free-weekend-".to_owned() + &instance.version.to_string() + ".zip").await?;
@@ -44,7 +56,7 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
 
     #[cfg(target_os = "linux")] {
         let file: File;
-        if instance.version == 38 || instance.version == 37 {
+        if instance.version == 37 {
             file = File::open(instance.path.join("free-weekend-".to_owned() + &instance.version.to_string()).join("subrosa.x64")).expect("failed to set executable bit");
         } else {
             file = File::open(instance.path.join("subrosa.x64")).expect("failed to set executable bit");
@@ -66,7 +78,7 @@ pub fn open_instance(instance: Instance) {
     #[cfg(target_os = "linux")]
     let game_exe= "./subrosa.x64";
     let path: PathBuf;
-    if instance.version == 38 || instance.version == 37 {
+    if instance.version == 37 {
         path = instance.path.join("free-weekend-".to_owned() + &instance.version.to_string());
     } else {
         path = instance.path;

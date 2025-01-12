@@ -1,4 +1,6 @@
-use instance_manager::{delete_instance, download_instance, open_instance, Instance};
+use std::path::PathBuf;
+
+use instance_manager::{delete_instance, download_instance, is_instance, open_instance, Instance};
 use settings::{get_settings, save_settings, Settings};
 use tauri::AppHandle;
 
@@ -31,6 +33,10 @@ async fn delete_instance_command(instance: Instance) {
     delete_instance(instance).await
 }
 
+#[tauri::command]
+fn is_instance_command(path: String) -> Result<(), String> {
+    is_instance(PathBuf::from(path))
+}
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -41,7 +47,8 @@ pub fn run() {
             save_settings_command,
             open_instance_command,
             download_instance_command,
-            delete_instance_command
+            delete_instance_command,
+            is_instance_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

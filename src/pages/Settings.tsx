@@ -27,15 +27,18 @@ export default function () {
               <button
                 class="flex flex-row text-xs bg-crust px-2 py-1 rounded-md my-2 mx-2"
                 onClick={async () => {
-                  const folder = await open({
-                    directory: true,
-                    canCreateDirectories: true,
-                    defaultPath: settings()?.installLocation,
-                  });
-                  if (folder) {
-                    const thing = settings();
-                    thing!.installLocation = folder;
-                    setSettings(thing);
+                  const thing = settings();
+                  if (thing) {
+                    const folder = await open({
+                      directory: true,
+                      canCreateDirectories: true,
+                      defaultPath: settings()?.installLocation,
+                    });
+                    if (folder) {
+                      thing.installLocation = folder;
+                      thing.instances = [];
+                      setSettings(thing);
+                    }
                   }
                 }}
               >
