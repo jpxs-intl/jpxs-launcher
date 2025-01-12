@@ -87,7 +87,7 @@ class SettingsManagerConstructor {
     });
     invoke("save_settings_command", {
       settings: convertToRust(this.settings!),
-    }).catch(console.error);
+    });
   }
   async forceFetchSettings() {
     const settings = await invoke<RustSettings>("get_settings_command");

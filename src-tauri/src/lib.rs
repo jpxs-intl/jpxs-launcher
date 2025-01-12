@@ -7,15 +7,17 @@ use tauri::AppHandle;
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 mod instance_manager;
 mod settings;
+mod error;
+use error::Error;
 
 #[tauri::command]
-fn get_settings_command() -> Result<Settings, String> {
-    get_settings().map_err(|e| e.to_string())
+fn get_settings_command() -> Result<Settings, Error> {
+    get_settings()
 }
 
 #[tauri::command]
-fn save_settings_command(settings: Settings) -> Result<(), String> {
-    save_settings(settings).map_err(|e| e.to_string())
+fn save_settings_command(settings: Settings) -> Result<(), Error> {
+    save_settings(settings)
 }
 
 #[tauri::command]
@@ -24,12 +26,12 @@ fn open_instance_command(instance: Instance) -> () {
 }
 
 #[tauri::command]
-async fn download_instance_command(instance: Instance, app: AppHandle) -> Result<(), String> {
-    download_instance(instance, app).await.map_err(|e| e.to_string())
+async fn download_instance_command(instance: Instance, app: AppHandle) -> Result<(), Error> {
+    download_instance(instance, app).await
 }
 
 #[tauri::command]
-async fn delete_instance_command(instance: Instance) {
+async fn delete_instance_command(instance: Instance) -> Result<(), Error> {
     delete_instance(instance).await
 }
 

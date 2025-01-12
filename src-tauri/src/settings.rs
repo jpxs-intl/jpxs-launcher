@@ -3,6 +3,7 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
+use crate::error::Error;
 use crate::instance_manager::Instance;
 
 #[derive(Serialize, Deserialize)]
@@ -19,7 +20,7 @@ const HOMEDIR: &str = "APPDATA";
 
 #[cfg(any(target_os = "macos", target_os = "linux"))]
 const HOMEDIR: &str = "HOME";
-pub fn get_base_dir() -> PathBuf {
+pub fn get_base_dir() -> Result<PathBuf, Error> {
     let home = PathBuf::from(std::env::var(HOMEDIR).unwrap());
     #[cfg(debug_assertions)]
     let jpxs_folder_name = ".dev_jpxs_launcher";
@@ -33,47 +34,39 @@ pub fn get_base_dir() -> PathBuf {
         .join("Application Support")
         .join(jpxs_folder_name);
     if !base_dir.exists() {
-        fs::create_dir(&base_dir).expect("Could not create base directory");
+        fs::create_dir(&base_dir)?;
     }
-    return base_dir;
+    Ok(base_dir)
 }
 
-pub fn get_settings_path() -> PathBuf {
-    return get_base_dir().join("settings.json");
+pub fn get_settings_path() -> Result<PathBuf, Error> {
+    Ok(get_base_dir()?.join("settings.json"))
 }
 
-pub fn check_settings_exist() {
-    if !Path::exists(&get_settings_path()) {
-        save_settings(Settings {
-            install_location: get_base_dir().join("instances"),
+pub fn check_settings_exist() -> Result<(), Error> {
+    if !Path::try_exists(&get_settings_path()?)? {
+        Ok(save_settings(Settings {
+            install_location: get_base_dir()?.join("instances"),
             instances: vec![],
             last_played: None,
             settings_version: SETTINGS_VERSION,
-        })
-        .expect("Failed Creating Settings");
+        })?)
+    } else {
+        Ok(())
     }
 }
 
-pub fn get_settings() -> Result<Settings, serde_json::Error> {
-    let config = get_settings_path();
-    check_settings_exist();
-    let result = fs::read_to_string(config);
-    match serde_json::from_str(result.expect("Failed Loading: IO Error").as_str()) {
-        Ok(val) => Ok(val),
-        Err(val) => Err(val),
-    }
+pub fn get_settings() -> Result<Settings, Error> {
+    check_settings_exist()?;
+    Ok(serde_json::from_str(&fs::read_to_string(get_settings_path()?)?)?)
 }
 
-pub fn save_settings(settings: Settings) -> Result<(), std::io::Error> {
-    let config = get_settings_path();
+pub fn save_settings(settings: Settings) -> Result<(), Error> {
+    let config = get_settings_path()?;
     let json = serde_json::to_string_pretty(&settings);
     if !settings.install_location.exists() {
-        fs::create_dir(settings.install_location)
-            .expect("Failed Saving: Could not create Install Location Folder");
+        fs::create_dir(settings.install_location)?;
     }
     println!("Saving");
-    match fs::write(config, json.expect("Failed Saving: Malformed JSON")) {
-        Ok(val) => Ok(val),
-        Err(val) => Err(val),
-    }
+    Ok(fs::write(config, json?)?)
 }
