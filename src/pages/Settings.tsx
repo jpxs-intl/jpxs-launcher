@@ -4,6 +4,7 @@ import { SettingsManager } from "../SettingsManager";
 import { Icon } from "solid-heroicons";
 import { folder } from "solid-heroicons/solid";
 import { open } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
 
 export default function () {
   const [settings, setSettings] = createSignal(SettingsManager.getSettings(), {
@@ -17,7 +18,7 @@ export default function () {
     <>
       <Sidebar />
       <section class="flex flex-row-reverse max-w-5xl mr-16 text-right">
-        <div class="bg-surface0 w-[2px] h-72 my-16"></div>
+        <div class="bg-surface0 w-[2px] h-80 my-16"></div>
         <div class="my-16 ">
           <h1 class="text-3xl font-bold pb-4 mx-4">Settings</h1>
           <hr class="border-surface0 w-64 "></hr>
@@ -52,7 +53,27 @@ export default function () {
               Changing Instance Location does not <br /> get rid of old Instance
               folders
             </p>
+            <button
+              class="bg-surface0 px-2 py-1 my-2 mr-4 rounded-lg text-sm"
+              onClick={() => {
+                invoke("open_path_command", {
+                  path: settings()!.installLocation,
+                });
+              }}
+            >
+              Open Instances Folder
+            </button>
           </section>
+          <hr class="border-surface0 my-2 w-64" />
+          <h2 class="text-xl font-bold py-2 mx-6">Settings</h2>
+          <button
+            class="bg-surface0 px-2 py-1 mr-4 rounded-lg text-sm"
+            onClick={() => {
+              invoke("open_settings_command");
+            }}
+          >
+            Open Settings Folder
+          </button>
         </div>
       </section>
     </>

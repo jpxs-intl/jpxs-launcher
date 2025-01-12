@@ -4,6 +4,7 @@ import freeweekend from "../assets/freeweekend.png";
 import subrosa from "../assets/subrosa.png";
 
 const buildNumbers = new Map<number, string>([
+  [99, "f"],
   [38, "f"],
   [37, "c"],
   [36, "b"],
@@ -42,8 +43,9 @@ export function InstanceComponent(props: {
       <div class="text-left">
         <h1 class="text-2xl font-bold">{instance.name}</h1>
         <h2 style={`color: hsl(${instance.version * 45}, 100%, 60%)`}>
-          {instance.version}
+          {instance.version === 99 ? 38 : instance.version}
           {buildNumbers.get(instance.version)}
+          {instance.version === 99 ? " (No Custom Maps)" : ""}
         </h2>
       </div>
     </button>

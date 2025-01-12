@@ -2071,6 +2071,7 @@ name = "jpxs-launcher"
 version = "0.1.0"
 dependencies = [
  "futures-util",
+ "open",
  "reqwest",
  "serde",
  "serde_json",

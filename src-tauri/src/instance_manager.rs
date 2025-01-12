@@ -36,7 +36,13 @@ pub fn is_instance(path: PathBuf) -> Result<(), String> {
 
 pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(), Error> {
     // base url for fw: https://assets.jpxs.io/freeweekend/
-    let response = reqwest::get("https://assets.jpxs.io/freeweekend/free-weekend-".to_owned() + &instance.version.to_string() + ".zip").await?;
+    let response: reqwest::Response;
+    if instance.version == 99 {
+        // 38 with no custom maps
+        response = reqwest::get("https://assets.jpxs.io/freeweekend/free-weekend-38_no_maps.zip").await?;
+    } else {
+        response = reqwest::get("https://assets.jpxs.io/freeweekend/free-weekend-".to_owned() + &instance.version.to_string() + ".zip").await?;
+    }
     let size = response.content_length().expect("failed to get content length");
     let mut downloaded: u64 = 0;
     let mut stream = response.bytes_stream();

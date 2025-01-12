@@ -89,10 +89,11 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
           <h2>
             Version:
             <select
-              class="bg-surface0 mx-2 text-black"
+              class="mx-2 bg-mantle text-black"
               id="instanceVersionDropdown"
             >
-              <option value={38}>38</option>
+              <option value={38}>38 (Recommended)</option>
+              <option value={99}>38 (No Custom Maps)</option>
               <option value={37}>37</option>
               <option value={36}>36</option>
               <option value={34}>34</option>
@@ -296,6 +297,7 @@ export default function () {
           <button
             class={`flex flex-row transition-colors duration-100 hover:bg-crust pl-1 pr-2 py-2 rounded-xl bg-surface0`}
             onClick={() => {
+              setDeleteMode(false);
               (
                 document.querySelector(
                   "#instanceCreationDialog"

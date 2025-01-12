@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use instance_manager::{delete_instance, download_instance, is_instance, open_instance, Instance};
-use settings::{get_settings, save_settings, Settings};
+use settings::{get_base_dir, get_settings, save_settings, Settings};
 use tauri::AppHandle;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -39,6 +39,17 @@ async fn delete_instance_command(instance: Instance) -> Result<(), Error> {
 fn is_instance_command(path: String) -> Result<(), String> {
     is_instance(PathBuf::from(path))
 }
+
+#[tauri::command]
+fn open_path_command(path: String) -> Result<(), Error> {
+    Ok(open::that(path)?)
+}
+
+#[tauri::command]
+fn open_settings_command() -> Result<(), Error> {
+    Ok(open::that(get_base_dir()?)?)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -50,7 +61,9 @@ pub fn run() {
             open_instance_command,
             download_instance_command,
             delete_instance_command,
-            is_instance_command
+            is_instance_command,
+            open_path_command,
+            open_settings_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
