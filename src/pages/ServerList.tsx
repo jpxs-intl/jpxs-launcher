@@ -2,6 +2,8 @@ import { For, createResource, createSignal } from "solid-js";
 import Sidebar from "../components/Sidebar";
 import Server from "../components/Server";
 
+const [playerCount, setPlayerCount] = createSignal(0);
+export { playerCount };
 export type server = {
   id: number;
   name: string;
@@ -27,6 +29,7 @@ export type server = {
 const peopleWeHate = ["205.174.149.108"];
 
 const [servers, { refetch }] = createResource(async () => {
+  let playercount = 0;
   const serverList: server[] = await (
     await fetch(`https://jpxs.io/api/servers`)
   ).json();
@@ -34,7 +37,7 @@ const [servers, { refetch }] = createResource(async () => {
     .filter((server) => !peopleWeHate.includes(server.address))
     .map((server) => {
       server.name = `${server.emoji} ${server.name}`;
-
+      playercount += server.players;
       if (server.masterServer == "jpxs") {
         server.build = `${server.build}`;
         server.icon =
@@ -45,6 +48,7 @@ const [servers, { refetch }] = createResource(async () => {
       }
       return server;
     });
+  setPlayerCount(playercount);
   return serverList;
 });
 

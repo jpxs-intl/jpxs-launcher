@@ -1,17 +1,13 @@
 import { Icon } from "solid-heroicons";
 import Sidebar from "../components/Sidebar";
 import { trash, plus } from "solid-heroicons/outline";
-import { createEffect, createSignal, For } from "solid-js";
-import {
-  convertInstanceToRust,
-  Instance,
-  SettingsManager,
-} from "../SettingsManager";
+import { createEffect, createSignal, For, onMount } from "solid-js";
+import { Instance, SettingsManager } from "../SettingsManager";
 import { InstanceManager } from "../InstanceManager";
 import freeweekend from "../assets/freeweekend.png";
 import subrosa from "../assets/subrosa.png";
 import { listen } from "@tauri-apps/api/event";
-import { invoke } from "@tauri-apps/api/core";
+import { useSearchParams } from "@solidjs/router";
 const buildNumbers = new Map<number, string>([
   [38, "f"],
   [37, "c"],
@@ -20,23 +16,27 @@ const buildNumbers = new Map<number, string>([
 ]);
 
 export function InstanceComponent(props: {
-  instance: Instance;
+  class?: string;
+  instance?: Instance;
   deleteMode: boolean;
 }) {
   const instance = props.instance;
+  if (!instance) {
+    return <></>;
+  }
   return (
     <button
       class={`bg-surface0 ${
         props.deleteMode ? "hover:bg-red border-red border-2" : "hover:bg-crust"
-      } transition-colors duration-100 px-4 py-2 rounded-xl flex flex-row gap-x-2`}
+      } transition-colors duration-100 px-4 py-2 rounded-xl flex flex-row gap-x-2 ${
+        props.class
+      }`}
       onClick={() => {
         if (props.deleteMode) {
           InstanceManager.deleteInstance(instance);
           SettingsManager.saveSettings();
         } else {
-          invoke("open_instance_command", {
-            instance: convertInstanceToRust(instance),
-          });
+          InstanceManager.openInstance(instance);
         }
       }}
     >
@@ -200,6 +200,14 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
   );
 }
 export default function () {
+  const [searchParams] = useSearchParams();
+  if (searchParams.createInstance) {
+    onMount(() => {
+      (
+        document.querySelector("#instanceCreationDialog") as HTMLDialogElement
+      ).showModal();
+    });
+  }
   const [instances, setInstances] = createSignal<Instance[]>(
     InstanceManager.getInstances(),
     {

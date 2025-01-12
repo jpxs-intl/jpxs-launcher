@@ -38,18 +38,21 @@ export function convertInstanceToTs(instance: RustInstance): Instance {
 export interface Settings {
   installLocation: string;
   instances: Instance[];
+  lastPlayed: string | null;
   settingsVersion: number;
 }
 
 export interface RustSettings {
   install_location: string;
   instances: RustInstance[];
+  last_played: string | null;
   settings_version: number;
 }
 
 function convertToRust(settings: Settings): RustSettings {
   return {
     install_location: settings.installLocation,
+    last_played: settings.lastPlayed,
     instances: settings.instances.map(convertInstanceToRust),
     settings_version: settings.settingsVersion,
   };
@@ -58,6 +61,7 @@ function convertToRust(settings: Settings): RustSettings {
 function convertToTs(settings: RustSettings): Settings {
   return {
     installLocation: settings.install_location,
+    lastPlayed: settings.last_played,
     instances: settings.instances.map(convertInstanceToTs),
     settingsVersion: settings.settings_version,
   };

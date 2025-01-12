@@ -25,7 +25,7 @@ export default function () {
             <h2 class="text-xl font-bold pt-4 mx-6">Instances</h2>
             <div class="flex flex-row-reverse">
               <button
-                class="flex flex-row-reverse text-xs bg-crust px-4 py-1 rounded-md my-2 mx-2 max-w-48"
+                class="flex flex-row text-xs bg-crust px-2 py-1 rounded-md my-2 mx-2"
                 onClick={async () => {
                   const folder = await open({
                     directory: true,
@@ -39,11 +39,10 @@ export default function () {
                   }
                 }}
               >
-                <p class="text-subtext1 max-w-32">
-                  {/* this doesnt want to wrap, help. */}
+                <Icon path={folder} class="w-4 h-4 mr-2" />
+                <p class="text-subtext1 text-ellipsis">
                   {settings()?.installLocation}
                 </p>
-                <Icon path={folder} class="w-4 h-4 mr-2" />
               </button>
             </div>
             <p class="text-xs text-subtext0 font-light px-6">

@@ -9,6 +9,7 @@ use crate::instance_manager::Instance;
 pub struct Settings {
     pub install_location: PathBuf,
     pub instances: Vec<Instance>,
+    pub last_played: Option<String>,
     pub settings_version: i32,
 }
 
@@ -46,6 +47,7 @@ pub fn check_settings_exist() {
         save_settings(Settings {
             install_location: get_base_dir().join("instances"),
             instances: vec![],
+            last_played: None,
             settings_version: SETTINGS_VERSION,
         })
         .expect("Failed Creating Settings");

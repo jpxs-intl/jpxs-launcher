@@ -39,6 +39,19 @@ class InstanceManagerConstructor {
     }
   }
 
+  openInstance(instance: Instance) {
+    if (this.settings) {
+      invoke("open_instance_command", {
+        instance: convertInstanceToRust(instance),
+      });
+      this.settings.lastPlayed = instance.name;
+      SettingsManager.saveSettings();
+    }
+    this.listeners.forEach((callback) => {
+      callback(this.instances);
+    });
+  }
+
   getInstances() {
     return this.instances;
   }
@@ -49,6 +62,9 @@ class InstanceManagerConstructor {
 
   deleteInstance(instance: Instance) {
     if (this.settings) {
+      if (instance.name === this.settings.lastPlayed) {
+        this.settings.lastPlayed = null;
+      }
       this.instances.splice(
         this.instances.findIndex((val) => instance.name === val.name),
         1
