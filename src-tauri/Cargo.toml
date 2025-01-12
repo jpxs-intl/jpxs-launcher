@@ -1,7 +1,7 @@
 [package]
 name = "jpxs-launcher"
-version = "0.1.0"
-description = "A Tauri App"
+version = "0.2.0"
+description = "A Launcher for Sub Rosa Free Weekend versions."
 authors = ["you"]
 edition = "2021"
 
