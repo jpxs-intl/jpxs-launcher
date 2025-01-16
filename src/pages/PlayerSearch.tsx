@@ -52,22 +52,29 @@ export default function () {
   const [error, setError] = createSignal<string>();
   const [player, setPlayer] = createSignal<player>();
   let inputRef!: HTMLInputElement;
+  // https://avatars.jpxs.io/karl?size=256
   return (
     <>
       <Sidebar />
       <section class="ml-64 flex flex-col items-center">
         <h1 class="font-bold text-3xl pt-12 pb-8 text-center">Player Search</h1>
         <Show when={player()}>
-          <div class="bg-crust px-4 py-4 rounded-xl ">
-            <h1 class="font-bold text-2xl">{player()!.name}</h1>
-            <div class="text-left">
-              <p>Phone Number: {player()!.phoneNumber}</p>
-              <p>Game ID: {player()!.gameId}</p>
-              <p>Steam ID: {player()!.steamId}</p>
-              <p>First seen: {dateToString(new Date(player()!.firstSeen))}</p>
-              <p>
-                Last seen: {dateToString(new Date(player()!.lastSeen), true)}
-              </p>
+          <div class="bg-crust px-4 py-4 rounded-xl flex flex-row gap-x-2">
+            <img
+              class="w-32 h-32 place-self-center"
+              src={`https://avatars.jpxs.io/${player()!.phoneNumber}?size=128`}
+            />
+            <div>
+              <h1 class="font-bold text-2xl">{player()!.name}</h1>
+              <div class="text-left">
+                <p>Phone Number: {player()!.phoneNumber}</p>
+                <p>Game ID: {player()!.gameId}</p>
+                <p>Steam ID: {player()!.steamId}</p>
+                <p>First seen: {dateToString(new Date(player()!.firstSeen))}</p>
+                <p>
+                  Last seen: {dateToString(new Date(player()!.lastSeen), true)}
+                </p>
+              </div>
             </div>
           </div>
         </Show>
