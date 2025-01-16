@@ -12,9 +12,15 @@ pub struct Settings {
     pub instances: Vec<Instance>,
     pub last_played: Option<String>,
     pub settings_version: i32,
+    #[serde(default="default_update")]
+    pub check_update_automatically: bool,
 }
 
-const SETTINGS_VERSION: i32 = 1;
+fn default_update() -> bool {
+    true
+}
+
+const SETTINGS_VERSION: i32 = 2;
 #[cfg(target_os = "windows")]
 const HOMEDIR: &str = "APPDATA";
 
@@ -50,6 +56,7 @@ pub fn check_settings_exist() -> Result<(), Error> {
             instances: vec![],
             last_played: None,
             settings_version: SETTINGS_VERSION,
+            check_update_automatically: true,
         })?)
     } else {
         Ok(())

@@ -17,9 +17,9 @@ pub struct Instance {
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-struct DownloadPacket {
-    total_size: u64,
-    packets: u64,
+pub struct DownloadPacket {
+    pub total_size: u64,
+    pub packets: u64,
 }
 
 pub fn is_instance(path: PathBuf) -> Result<(), String> {

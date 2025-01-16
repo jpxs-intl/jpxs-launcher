@@ -40,6 +40,7 @@ export interface Settings {
   instances: Instance[];
   lastPlayed: string | null;
   settingsVersion: number;
+  checkUpdateAutomatically: boolean;
 }
 
 export interface RustSettings {
@@ -47,6 +48,7 @@ export interface RustSettings {
   instances: RustInstance[];
   last_played: string | null;
   settings_version: number;
+  check_update_automatically: boolean;
 }
 
 function convertToRust(settings: Settings): RustSettings {
@@ -55,6 +57,7 @@ function convertToRust(settings: Settings): RustSettings {
     last_played: settings.lastPlayed,
     instances: settings.instances.map(convertInstanceToRust),
     settings_version: settings.settingsVersion,
+    check_update_automatically: settings.checkUpdateAutomatically,
   };
 }
 
@@ -64,6 +67,7 @@ function convertToTs(settings: RustSettings): Settings {
     lastPlayed: settings.last_played,
     instances: settings.instances.map(convertInstanceToTs),
     settingsVersion: settings.settings_version,
+    checkUpdateAutomatically: settings.check_update_automatically,
   };
 }
 
@@ -92,6 +96,7 @@ class SettingsManagerConstructor {
   async forceFetchSettings() {
     const settings = await invoke<RustSettings>("get_settings_command");
     this.settings = convertToTs(settings);
+    console.log("fetched settings");
     this.listeners.forEach((callback) => {
       callback(this.settings!);
     });

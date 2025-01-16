@@ -1,9 +1,10 @@
-use std::path::PathBuf;
+use std::{cmp::min, path::PathBuf};
 
-use instance_manager::{delete_instance, download_instance, is_instance, open_instance, Instance};
+use instance_manager::{delete_instance, download_instance, is_instance, open_instance, DownloadPacket, Instance};
 use settings::{get_base_dir, get_settings, save_settings, Settings};
 use tauri::AppHandle;
-
+use tauri::Emitter;
+use tauri_plugin_updater::UpdaterExt;
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 mod error;
 mod instance_manager;
@@ -50,6 +51,29 @@ fn open_settings_command() -> Result<(), Error> {
     Ok(open::that(get_base_dir()?)?)
 }
 
+#[tauri::command]
+async fn update_app(app: AppHandle) -> Result<(), Error> {
+    if let Some(update) =  app.updater()?.check().await? {
+        let mut downloaded = 0;
+        update.download_and_install(|chunk_len, size| {
+            let fullsize = size.expect("no size");
+            let new = min(downloaded + (chunk_len as u64), fullsize);
+            downloaded = new;
+            let _ = app.emit("update_progress",
+            DownloadPacket {
+                total_size: fullsize,
+                packets: downloaded,
+            });
+        }, || {
+            println!("downloaded, restarting");
+        }).await?;
+
+        app.restart();
+    }
+
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -64,7 +88,8 @@ pub fn run() {
             delete_instance_command,
             is_instance_command,
             open_path_command,
-            open_settings_command
+            open_settings_command,
+            update_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

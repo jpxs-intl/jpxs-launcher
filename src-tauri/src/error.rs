@@ -8,6 +8,8 @@ pub enum Error {
     Http(#[from] reqwest::Error),
     #[error(transparent)]
     ZipError(#[from] zip::result::ZipError),
+    #[error(transparent)]
+    UpdaterError(#[from] tauri_plugin_updater::Error)
 }
 
 impl serde::Serialize for Error {
