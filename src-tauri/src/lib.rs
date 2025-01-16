@@ -5,9 +5,9 @@ use settings::{get_base_dir, get_settings, save_settings, Settings};
 use tauri::AppHandle;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+mod error;
 mod instance_manager;
 mod settings;
-mod error;
 use error::Error;
 
 #[tauri::command]
@@ -53,6 +53,7 @@ fn open_settings_command() -> Result<(), Error> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![

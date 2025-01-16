@@ -58,7 +58,9 @@ pub fn check_settings_exist() -> Result<(), Error> {
 
 pub fn get_settings() -> Result<Settings, Error> {
     check_settings_exist()?;
-    Ok(serde_json::from_str(&fs::read_to_string(get_settings_path()?)?)?)
+    Ok(serde_json::from_str(&fs::read_to_string(
+        get_settings_path()?,
+    )?)?)
 }
 
 pub fn save_settings(settings: Settings) -> Result<(), Error> {

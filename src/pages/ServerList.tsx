@@ -69,7 +69,6 @@ export default function ServerList() {
             }`}
             onClick={() => {
               setFreeWeekend(true);
-              refetch();
             }}
           >
             Free Weekend
@@ -80,7 +79,6 @@ export default function ServerList() {
             }`}
             onClick={() => {
               setFreeWeekend(false);
-              refetch();
             }}
           >
             Vanilla

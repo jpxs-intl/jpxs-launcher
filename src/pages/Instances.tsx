@@ -247,8 +247,16 @@ function InstanceImportComponent() {
               invoke("is_instance_command", { path: path })
                 .then(() => {
                   setInvalidInstance(false);
+                  let name;
+                  if (path.lastIndexOf("/") === -1) {
+                    // windows
+                    name = path.slice(path.lastIndexOf("\\") + 1);
+                  } else {
+                    // linux
+                    name = path.slice(path.lastIndexOf("/") + 1);
+                  }
                   InstanceManager.addInstance({
-                    name: path.slice(path.lastIndexOf("/") + 1),
+                    name: name,
                     path: path,
                     version: version,
                     isFreeWeekend: isFreeWeekend,
