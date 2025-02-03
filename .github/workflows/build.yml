@@ -13,9 +13,9 @@ jobs:
       matrix:
         include:
           - platform: "ubuntu-24.04" # for Tauri v1 you could replace this with ubuntu-20.04.
-            args: ""
+            args: "linux"
           - platform: "windows-latest"
-            args: ""
+            args: "windows"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -55,9 +55,8 @@ jobs:
         with:
           includeUpdaterJson: true
           updaterJsonPreferNsis: true
-          args: ${{ matrix.args }}
 
       - uses: actions/upload-artifact@v4.6.0
         with:
-          name: artifacts
+          name: ${{matrix.args}}
           path: src-tauri/target/release/bundle/
