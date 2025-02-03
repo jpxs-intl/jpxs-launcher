@@ -9,7 +9,9 @@ pub enum Error {
     #[error(transparent)]
     ZipError(#[from] zip::result::ZipError),
     #[error(transparent)]
-    UpdaterError(#[from] tauri_plugin_updater::Error)
+    UpdaterError(#[from] tauri_plugin_updater::Error),
+    #[error(transparent)]
+    FsError(#[from] fs_extra::error::Error)
 }
 
 impl serde::Serialize for Error {

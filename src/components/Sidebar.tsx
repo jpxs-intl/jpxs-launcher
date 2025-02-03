@@ -36,6 +36,7 @@ export default function Sidebar() {
           <Icon path={cog_6Tooth} class="w-8 h-8"></Icon>
         </Button>
       </div>
+      <p class="fixed bottom-0 left-0 mx-2 text-sm text-subtext0">v0.4.0</p>
     </section>
   );
 }

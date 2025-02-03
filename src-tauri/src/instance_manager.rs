@@ -1,7 +1,9 @@
+use fs_extra::dir;
 use futures_util::StreamExt;
 #[cfg(target_os = "linux")]
 use os::unix::fs::PermissionsExt;
 use serde::{Deserialize, Serialize};
+use std::fs;
 use std::{cmp::min, os, process::Command};
 use std::{env::temp_dir, fs::File, io::Write, path::PathBuf};
 use tauri::{AppHandle, Emitter};
@@ -41,6 +43,9 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
         // 38 with no custom maps
         response =
             reqwest::get("https://assets.jpxs.io/freeweekend/free-weekend-38_no_maps.zip").await?;
+    } else if instance.version == 24 {
+        // 24 downloads from separate archive
+        response = reqwest::get("https://crypticsea.gart.sh/Sub%20Rosa/0.24/b/Sub%20Rosa%200.24b.zip").await?
     } else {
         response = reqwest::get(
             "https://assets.jpxs.io/freeweekend/free-weekend-".to_owned()
@@ -55,7 +60,7 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
     let mut downloaded: u64 = 0;
     let mut stream = response.bytes_stream();
     let path = temp_dir().join("./free-weekend.zip");
-    let mut file = File::create(path.clone())?;
+    let mut file = File::create(&path)?;
     while let Some(item) = stream.next().await {
         let chunk = item?;
         file.write_all(&chunk)?;
@@ -70,8 +75,24 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
         )
         .unwrap();
     }
-    zip_extensions::zip_extract(&(path.clone()), &instance.path)?;
 
+    if instance.version == 24 {
+        let folder_path = temp_dir().join(instance.name);
+        fs::create_dir(&folder_path)?;
+        zip_extensions::zip_extract(&(path.clone()), &folder_path)?;
+        fs::create_dir(&instance.path)?;
+        let mut options = dir::CopyOptions::new();
+        options.copy_inside = true;
+        let mut files = Vec::new();
+        for entry in fs::read_dir(folder_path.join("Sub Rosa 0.24b"))? {
+            files.push(entry?.path());
+        }
+        fs_extra::copy_items(&files, &instance.path, &options)?;
+        fs::remove_dir_all(&folder_path)?;
+    } else {
+        zip_extensions::zip_extract(&(path.clone()), &instance.path)?;
+    }
+    fs::remove_file(&path)?;
     #[cfg(target_os = "linux")]
     {
         let file = File::open(instance.path.join("subrosa.x64"))?;

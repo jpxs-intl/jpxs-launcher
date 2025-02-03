@@ -1,7 +1,7 @@
 import { Icon } from "solid-heroicons";
 import Sidebar from "../components/Sidebar";
 import { trash, plus, documentPlus, folderOpen } from "solid-heroicons/outline";
-import { createEffect, createSignal, For, onMount } from "solid-js";
+import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import { Instance, SettingsManager } from "../SettingsManager";
 import { InstanceManager } from "../InstanceManager";
 import { listen } from "@tauri-apps/api/event";
@@ -89,7 +89,7 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
           <h2>
             Version:
             <select
-              class="mx-2 bg-mantle text-black"
+              class="mx-2 px-1 bg-surface0 rounded-lg text-text appearance-none"
               id="instanceVersionDropdown"
             >
               <option value={38}>38 (Recommended)</option>
@@ -98,6 +98,7 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
               <option value={36}>36</option>
               <option value={34}>34</option>
               <option value={25}>25</option>
+              <option value={24}>24</option>
             </select>
           </h2>
           <p class="text-subtext0 ">
@@ -137,7 +138,7 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
                 const promise = InstanceManager.addInstance({
                   name: name,
                   version: parseInt(version),
-                  isFreeWeekend: true,
+                  isFreeWeekend: !(parseInt(version) === 24),
                 });
                 if (promise) {
                   promise.then(() => {
@@ -276,6 +277,15 @@ function InstanceImportComponent() {
   );
 }
 export default function () {
+  let holdingShift = false;
+  onMount(() => {
+    document.body.addEventListener("keydown", (ev) => {
+      holdingShift = ev.shiftKey;
+    });
+    document.body.addEventListener("keyup", (ev) => {
+      holdingShift = ev.shiftKey;
+    });
+  });
   const [searchParams] = useSearchParams();
   if (searchParams.createInstance) {
     onMount(() => {
@@ -301,7 +311,7 @@ export default function () {
       <section class="ml-72 mr-12">
         <h1 class="text-center text-3xl font-bold pt-12 pb-8">Instances</h1>
         <hr class="border-surface0" />
-        <div class="flex flex-row my-4 gap-x-4">
+        <div class="flex flex-row mt-4 gap-x-4">
           <button
             class={`flex flex-row transition-colors duration-100 hover:bg-crust pl-1 pr-2 py-2 rounded-xl bg-surface0`}
             onClick={() => {
@@ -336,12 +346,22 @@ export default function () {
             <Icon path={documentPlus} class="w-5 h-6 mr-1" /> Import Instance
           </button>
         </div>
-        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+        <Show when={deleteMode()}>
+          <p class="text-sm pt-2 text-subtext0">
+            Note: You can hold shift to keep deleting instances
+          </p>
+        </Show>
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 pt-4">
           <For each={instances()}>
             {(instance) => (
               <InstanceComponent
                 instance={instance}
                 deleteMode={deleteMode()}
+                onClick={() => {
+                  if (deleteMode() && !holdingShift) {
+                    setDeleteMode(false);
+                  }
+                }}
               />
             )}
           </For>

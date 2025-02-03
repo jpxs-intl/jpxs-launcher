@@ -9,10 +9,12 @@ const buildNumbers = new Map<number, string>([
   [37, "c"],
   [36, "b"],
   [34, "b"],
+  [24, "b"],
 ]);
 
 export function InstanceComponent(props: {
   class?: string;
+  onClick?: () => undefined;
   instance?: Instance;
   deleteMode: boolean;
 }) {
@@ -33,6 +35,9 @@ export function InstanceComponent(props: {
           SettingsManager.saveSettings();
         } else {
           InstanceManager.openInstance(instance);
+        }
+        if (props.onClick) {
+          props.onClick();
         }
       }}
     >
