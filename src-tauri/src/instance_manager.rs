@@ -57,6 +57,7 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
     let size = response
         .content_length()
         .expect("failed to get content length");
+
     let mut downloaded: u64 = 0;
     let mut stream = response.bytes_stream();
     let path = temp_dir().join("./free-weekend.zip");

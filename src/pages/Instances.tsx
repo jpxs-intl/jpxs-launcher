@@ -313,7 +313,11 @@ export default function () {
       <section class="ml-72 mr-12">
         <h1 class="text-center text-3xl font-bold pt-12 pb-8">Instances</h1>
         <hr class="border-surface0" />
-        <div class="flex flex-row mt-4 gap-x-4">
+        <p class="mt-2 text-subtext0 text-sm">
+          Instances are game versions you can install. You can create multiple
+          instances of the same or different game versions.
+        </p>
+        <div class="flex flex-row mt-2 gap-x-4">
           <button
             class={`flex flex-row transition-colors duration-100 hover:bg-crust pl-1 pr-2 py-2 rounded-xl bg-surface0`}
             onClick={() => {
