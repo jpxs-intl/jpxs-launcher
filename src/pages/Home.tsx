@@ -53,6 +53,9 @@ export default function () {
             <h3 class="text-left pt-1 mx-4">
               It looks like you have no Instances...
             </h3>
+            <p class="ml-4 mt-2 font-light text-subtext0 text-sm">
+              Why not add some?
+            </p>
             <A
               href="/instances?createInstance=true"
               class={`flex flex-row transition-colors duration-100 hover:bg-crust pl-2 py-2 rounded-xl bg-surface0 ml-2 w-40`}

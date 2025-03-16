@@ -62,7 +62,11 @@ export default function ServerList() {
       <section class="ml-72 mr-12">
         <h1 class="text-center font-bold text-3xl pt-12 pb-8">Server List</h1>
         <hr class="border-surface0 pb-2" />
-        <div class="flex flex-row my-4 gap-x-4">
+        <p class="text-subtext0 text-sm mt-2">
+          Note: To play on these servers, launch an instance with the same
+          version number!
+        </p>
+        <div class="flex flex-row mt-2 mb-4 gap-x-4">
           <button
             class={`transition-colors duration-100 hover:bg-crust px-4 py-2 rounded-xl ${
               isFreeWeekend() ? "bg-surface0" : "bg-mantle"

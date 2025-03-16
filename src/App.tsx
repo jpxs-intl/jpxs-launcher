@@ -29,7 +29,7 @@ function LoadingComponent(props: { ref?: HTMLDialogElement }) {
   });
   return (
     <dialog
-      id="instanceDownloadingDialog"
+      id="launcherDownloadingDialog"
       class="rounded-xl bg-crust"
       ref={props.ref}
       onInput={(event) => {
@@ -102,7 +102,7 @@ function App() {
             <h1 class="font-bold text-3xl">Update Found!</h1>
             <p class="pt-2 pb-4">Would you like to update?</p>
             <button
-              class="rounded-lg bg-surface0 hover:bg-mantle px-2 py-1"
+              class="rounded-lg bg-surface0 hover:bg-mantle transition-colors px-2 py-1"
               onClick={() => {
                 downloadingDialog.showModal();
                 const newSettings = settings()!;
@@ -114,7 +114,7 @@ function App() {
               Yes
             </button>
             <button
-              class="rounded-lg bg-surface0 hover:bg-mantle px-2 py-1 mx-2"
+              class="rounded-lg bg-surface0 hover:bg-mantle transition-colors px-2 py-1 mx-2"
               onClick={() => {
                 const newSettings = settings()!;
                 newSettings.checkUpdateAutomatically = !checkboxRef.checked;

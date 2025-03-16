@@ -13,6 +13,8 @@ import { InstanceComponent } from "../components/InstanceComponent";
 function LoadingComponent() {
   let totalSize = 0;
   const [progress, setProgress] = createSignal(0);
+  let loadingTitleHref!: HTMLHeadingElement;
+  let loadingTextHref!: HTMLParagraphElement;
   listen<{ totalSize: number; packets: number }>(
     "download_progress",
     (packet) => {
@@ -34,15 +36,15 @@ function LoadingComponent() {
       }}
     >
       <div class="text-text px-4 py-4">
-        <h1 class="font-bold text-2xl">
+        <h1 class="font-bold text-2xl" ref={loadingTitleHref!}>
           {totalSize === progress() ? "Extracting..." : "Downloading..."}
         </h1>
         <div class="rounded-xl bg-mantle h-4 w-48">
           <div id="loadingBar" class="rounded-xl h-4 bg-lavender"></div>
         </div>
-        <p class="text-subtext0">{`${(progress() / 1000000).toFixed(2)}/${(
-          totalSize / 1000000
-        ).toFixed(2)}MB`}</p>
+        <p class="text-subtext0" ref={loadingTextHref!}>{`
+          ${(progress() / 1000000).toFixed(2)}
+        /${(totalSize / 1000000).toFixed(2)}MB`}</p>
       </div>
     </dialog>
   );
