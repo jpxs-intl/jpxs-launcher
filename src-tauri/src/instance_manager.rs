@@ -115,8 +115,14 @@ pub fn open_instance(instance: Instance) -> () {
     let game_exe = "./subrosa.x64";
 
     let exe_path = instance.path.join(game_exe);
-    Command::new(exe_path)
-        .current_dir(instance.path)
-        .spawn()
-        .expect("Failed opening game");
+    let mut command = Command::new(exe_path);
+
+    #[cfg(target_os = "linux")] {
+        if instance.version == 24 {
+            command.env("LD_PRELOAD", "./libsteam_api.so");
+        }
+    }
+
+    command.current_dir(instance.path);
+    command.spawn().expect("Failed to execute process");        
 }
