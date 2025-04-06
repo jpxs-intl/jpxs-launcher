@@ -1,5 +1,6 @@
-use std::{cmp::min, path::PathBuf, process::Command};
+use std::{cmp::min, path::PathBuf};
 
+use sysinfo::System;
 use instance_manager::{delete_instance, download_instance, is_instance, open_instance, DownloadPacket, Instance};
 use settings::{get_base_dir, get_settings, save_settings, Settings};
 use tauri::AppHandle;
@@ -57,21 +58,11 @@ fn is_instance_command(path: String) -> Result<(), String> {
 
 #[tauri::command]
 fn is_steam_open() -> Result<bool, Error> {
-    #[cfg(target_os = "windows")]
-    let output = Command::new("tasklist")
-        .arg("/FI")
-        .arg("IMAGENAME eq steam.exe")
-        .output()?;
-    #[cfg(target_os = "linux")]
-    let output = Command::new("pgrep")
-        .arg("-x")
-        .arg("steam")
-        .output()?;
-
-    if output.stdout.is_empty() {
-        return Ok(false);
+    let s = System::new_all();
+    for _process in s.processes_by_name("steam".as_ref()) {
+        return Ok(true);
     }
-    Ok(true)
+    Ok(false)
 }
 
 // misc commands

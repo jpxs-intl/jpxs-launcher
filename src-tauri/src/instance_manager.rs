@@ -2,9 +2,11 @@ use fs_extra::dir;
 use futures_util::StreamExt;
 #[cfg(target_os = "linux")]
 use os::unix::fs::PermissionsExt;
+#[cfg(target_os = "linux")]
+use std::os;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::{cmp::min, os, process::Command};
+use std::{cmp::min, process::Command};
 use std::{env::temp_dir, fs::File, io::Write, path::PathBuf};
 use tauri::{AppHandle, Emitter};
 
