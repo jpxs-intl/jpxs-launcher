@@ -191,7 +191,7 @@ function InstanceImportComponent() {
             <p class="flex flex-row items-center">
               Instance Path:
               <button
-                class={`bg-surface0 flex flex-row text-xs px-2 py-1 rounded-md my-2 mx-2 ${
+                class={`bg-surface0 hover:bg-mantle transition-colors flex flex-row text-xs min-w-32 px-2 py-1 rounded-md my-2 mx-2 ${
                   invalidInstance() ? "border-red border-2" : ""
                 }`}
                 onClick={async () => {
@@ -221,7 +221,7 @@ function InstanceImportComponent() {
           <h2>
             Version:
             <select
-              class="bg-surface0 mx-2 text-black"
+              class="mx-2 px-1 bg-surface0 rounded-lg text-text appearance-none min-w-12"
               id="instanceVersionDropdown"
               ref={versionRef}
             >
@@ -317,7 +317,7 @@ export default function () {
           Instances are game versions you can install. You can create multiple
           instances of the same or different game versions.
         </p>
-        <div class="flex flex-row mt-2 gap-x-4">
+        <div class="flex flex-row mt-2 gap-x-2 xl:gap-x-4">
           <button
             class={`flex flex-row transition-colors duration-100 hover:bg-crust pl-1 pr-2 py-2 rounded-xl bg-surface0`}
             onClick={() => {
@@ -329,15 +329,17 @@ export default function () {
               ).showModal();
             }}
           >
-            <Icon path={plus} class="w-6 h-6 mr-1" /> Add Instance
+            <Icon path={plus} class="w-6 h-6 mr-1" />
+            Add Instance
           </button>
           <button
-            class={`flex flex-row transition-colors duration-100 hover:bg-crust pl-1 pr-2 py-2 rounded-xl bg-surface0`}
+            class={`flex flex-row transition-colors duration-100 hover:bg-red pl-1 pr-2 py-2 rounded-xl bg-surface0`}
             onClick={() => {
               setDeleteMode(!deleteMode());
             }}
           >
-            <Icon path={trash} class="w-5 h-6 mr-1" /> Delete Instance
+            <Icon path={trash} class="w-5 h-6 mr-1" />
+            Delete Instance
           </button>
           <button
             class={`flex flex-row transition-colors duration-100 hover:bg-crust pl-1 pr-2 py-2 rounded-xl bg-surface0`}
@@ -349,7 +351,8 @@ export default function () {
               ).showModal();
             }}
           >
-            <Icon path={documentPlus} class="w-5 h-6 mr-1" /> Import Instance
+            <Icon path={documentPlus} class="w-5 h-6 mr-1" />
+            Import Instance
           </button>
         </div>
         <Show when={deleteMode()}>

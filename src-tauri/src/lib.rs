@@ -37,6 +37,11 @@ async fn delete_instance_command(instance: Instance) -> Result<(), Error> {
 }
 
 #[tauri::command]
+fn get_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
+#[tauri::command]
 fn is_instance_command(path: String) -> Result<(), String> {
     is_instance(PathBuf::from(path))
 }
@@ -89,7 +94,8 @@ pub fn run() {
             is_instance_command,
             open_path_command,
             open_settings_command,
-            update_app
+            update_app,
+            get_version
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

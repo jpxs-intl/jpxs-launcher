@@ -79,7 +79,6 @@ export default function () {
           </div>
         </Show>
         <p class="text-center my-2">
-          Input:{" "}
           <input
             ref={inputRef}
             class={`bg-surface0 rounded-xl px-2 ${

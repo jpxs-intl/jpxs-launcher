@@ -89,8 +89,19 @@ function App() {
     <ErrorBoundary
       fallback={(err, reset) => {
         return (
-          <div onClick={reset} class="text-4xl text-red font-bold text-center">
-            Error: {err.toString()}
+          <div class="text-center">
+            <h1 class="font-bold text-4xl text-red ">{err.toString()}</h1>
+
+            <p class="text-lg font-normal text-text">
+              Something went wrong, please report this error in the JPXS discord
+              with context.
+            </p>
+            <button
+              onClick={reset}
+              class="rounded-xl px-4 py-1 text-text bg-surface0 hover:bg-crust transition-colors"
+            >
+              Go Back
+            </button>
           </div>
         );
       }}
