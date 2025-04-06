@@ -1,7 +1,9 @@
+import { invoke } from "@tauri-apps/api/core";
 import { InstanceManager } from "../InstanceManager";
 import { Instance, SettingsManager } from "../SettingsManager";
 import freeweekend from "../assets/freeweekend.png";
 import subrosa from "../assets/subrosa.png";
+import { JSX } from "solid-js";
 
 const buildNumbers = new Map<number, string>([
   [99, "f"],
@@ -15,6 +17,7 @@ const buildNumbers = new Map<number, string>([
 export function InstanceComponent(props: {
   class?: string;
   onClick?: () => undefined;
+  steamClosedDialog: HTMLDialogElement;
   instance?: Instance;
   deleteMode: boolean;
 }) {
@@ -29,12 +32,17 @@ export function InstanceComponent(props: {
       } transition-colors duration-100 px-4 py-2 rounded-xl flex flex-row gap-x-2 ${
         props.class
       }`}
-      onClick={() => {
+      onClick={async () => {
         if (props.deleteMode) {
           InstanceManager.deleteInstance(instance);
           SettingsManager.saveSettings();
         } else {
-          InstanceManager.openInstance(instance);
+          const steamOpen = await invoke<boolean>("is_steam_open");
+          if (steamOpen) {
+            InstanceManager.openInstance(instance);
+          } else {
+            props.steamClosedDialog.showModal();
+          }
         }
         if (props.onClick) {
           props.onClick();

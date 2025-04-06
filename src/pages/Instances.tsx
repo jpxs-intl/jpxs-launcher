@@ -9,6 +9,7 @@ import { useSearchParams } from "@solidjs/router";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { InstanceComponent } from "../components/InstanceComponent";
+import OpenSteamDialog from "../components/OpenSteamDialog";
 
 function LoadingComponent() {
   let totalSize = 0;
@@ -107,7 +108,7 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
             Note: You cannot change instance name after creating it.
           </p>
           <button
-            class="bg-surface0 hover:bg-mantle px-4 py-2 rounded-lg"
+            class="bg-surface0 hover:bg-mantle transition-colors px-4 py-2 rounded-lg"
             onClick={() => {
               const name = (
                 document.querySelector("#instanceNameInput") as HTMLInputElement
@@ -232,17 +233,17 @@ function InstanceImportComponent() {
               <option value={25}>25</option>
             </select>
           </h2>
-          <p class="flex flex-row items-center">
+          <p class="flex flex-row items-center gap-x-1">
             Is Free Weekend:{" "}
             <input
-              class="w-4 h-4 bg-surface0"
+              class="w-4 h-4 bg-surface0 rounded-full transition-colors appearance-none checked:bg-green"
               id="freeWeekendCheckbox"
               type="checkbox"
               ref={freeWeekendRef}
             />
           </p>
           <button
-            class="bg-surface0 hover:bg-mantle px-4 py-2 rounded-lg"
+            class="bg-surface0 hover:bg-mantle transition-colors px-4 py-2 rounded-lg"
             onClick={async () => {
               const path = pathRef.innerText;
               const version = parseInt(versionRef.value);
@@ -309,6 +310,7 @@ export default function () {
       <LoadingComponent />
       <CreateInstanceComponent instances={instances()} />
       <InstanceImportComponent />
+      <OpenSteamDialog />
       <Sidebar />
       <section class="ml-72 mr-12">
         <h1 class="text-center text-3xl font-bold pt-12 pb-8">Instances</h1>
@@ -366,6 +368,7 @@ export default function () {
               <InstanceComponent
                 instance={instance}
                 deleteMode={deleteMode()}
+                steamClosedDialog={document.querySelector("#steam-closed")!}
                 onClick={() => {
                   if (deleteMode() && !holdingShift) {
                     setDeleteMode(false);

@@ -6,6 +6,10 @@
   animation: shake 0.25s;
 }
 
+dialog {
+  background-color: var(--bg-crust);
+  color: var(--text-text);
+}
 @keyframes shake {
   0% {
     transform: rotate(0deg);

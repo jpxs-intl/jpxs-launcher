@@ -7,6 +7,7 @@ import { plus } from "solid-heroicons/outline";
 import { A } from "@solidjs/router";
 import { playerCount } from "./ServerList";
 import { InstanceComponent } from "../components/InstanceComponent";
+import OpenSteamDialog from "../components/OpenSteamDialog";
 
 export default function () {
   const [lastPlayed, setLastPlayed] = createSignal<string | null>(null);
@@ -24,6 +25,7 @@ export default function () {
   return (
     <>
       <Sidebar />
+      <OpenSteamDialog />
       <section class="flex flex-row ml-64">
         <div class="bg-surface0 w-[2px] h-72 my-16"></div>
         <div class="my-16">
@@ -35,6 +37,7 @@ export default function () {
               instance={InstanceManager.getInstances().find(
                 (instance) => instance.name === lastPlayed()
               )}
+              steamClosedDialog={document.querySelector("#steam-closed")!}
               deleteMode={false}
             />
             <p class="ml-4 mt-2 font-light text-subtext0 text-sm">

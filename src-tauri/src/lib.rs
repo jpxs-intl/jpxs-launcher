@@ -1,4 +1,4 @@
-use std::{cmp::min, path::PathBuf};
+use std::{cmp::min, path::PathBuf, process::Command};
 
 use instance_manager::{delete_instance, download_instance, is_instance, open_instance, DownloadPacket, Instance};
 use settings::{get_base_dir, get_settings, save_settings, Settings};
@@ -11,6 +11,8 @@ mod instance_manager;
 mod settings;
 use error::Error;
 
+// settings commands
+
 #[tauri::command]
 fn get_settings_command() -> Result<Settings, Error> {
     get_settings()
@@ -20,6 +22,18 @@ fn get_settings_command() -> Result<Settings, Error> {
 fn save_settings_command(settings: Settings) -> Result<(), Error> {
     save_settings(settings)
 }
+
+#[tauri::command]
+fn open_path_command(path: String) -> Result<(), Error> {
+    Ok(open::that(path)?)
+}
+
+#[tauri::command]
+fn open_settings_command() -> Result<(), Error> {
+    Ok(open::that(get_base_dir()?)?)
+}
+
+// instance commands
 
 #[tauri::command]
 fn open_instance_command(instance: Instance) -> () {
@@ -37,23 +51,34 @@ async fn delete_instance_command(instance: Instance) -> Result<(), Error> {
 }
 
 #[tauri::command]
-fn get_version() -> String {
-    env!("CARGO_PKG_VERSION").to_string()
-}
-
-#[tauri::command]
 fn is_instance_command(path: String) -> Result<(), String> {
     is_instance(PathBuf::from(path))
 }
 
 #[tauri::command]
-fn open_path_command(path: String) -> Result<(), Error> {
-    Ok(open::that(path)?)
+fn is_steam_open() -> Result<bool, Error> {
+    #[cfg(target_os = "windows")]
+    let output = Command::new("tasklist")
+        .arg("/FI")
+        .arg("IMAGENAME eq steam.exe")
+        .output()?;
+    #[cfg(target_os = "linux")]
+    let output = Command::new("pgrep")
+        .arg("-x")
+        .arg("steam")
+        .output()?;
+
+    if output.stdout.is_empty() {
+        return Ok(false);
+    }
+    Ok(true)
 }
 
+// misc commands
+
 #[tauri::command]
-fn open_settings_command() -> Result<(), Error> {
-    Ok(open::that(get_base_dir()?)?)
+fn get_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
 }
 
 #[tauri::command]
@@ -95,7 +120,8 @@ pub fn run() {
             open_path_command,
             open_settings_command,
             update_app,
-            get_version
+            get_version,
+            is_steam_open
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
