@@ -3,8 +3,7 @@ import { InstanceManager } from "../InstanceManager";
 import { Instance, SettingsManager } from "../SettingsManager";
 import freeweekend from "../assets/freeweekend.png";
 import subrosa from "../assets/subrosa.png";
-import { JSX } from "solid-js";
-
+import { setActiveInstance } from "./OpenSteamDialog";
 const buildNumbers = new Map<number, string>([
   [99, "f"],
   [38, "f"],
@@ -41,6 +40,7 @@ export function InstanceComponent(props: {
           if (steamOpen) {
             InstanceManager.openInstance(instance);
           } else {
+            setActiveInstance(instance);
             props.steamClosedDialog.showModal();
           }
         }

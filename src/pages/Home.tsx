@@ -67,7 +67,12 @@ export default function () {
             </A>
           </Show>
           <p class="mx-4">
-            There are currently {playerCount()} players online.
+            There are currently {playerCount().fw + playerCount().normal}{" "}
+            players online.
+          </p>
+          <p class="mx-4 text-subtext0 text-xs">
+            {playerCount().fw} in Free Weekend, {playerCount().normal} in
+            Vanilla
           </p>
         </div>
       </section>

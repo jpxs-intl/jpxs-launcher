@@ -2,7 +2,10 @@ import { For, createResource, createSignal } from "solid-js";
 import Sidebar from "../components/Sidebar";
 import Server from "../components/Server";
 
-const [playerCount, setPlayerCount] = createSignal(0);
+const [playerCount, setPlayerCount] = createSignal<{
+  fw: number;
+  normal: number;
+}>({ fw: 0, normal: 0 }, { equals: false });
 export { playerCount };
 export type server = {
   id: number;
@@ -29,7 +32,8 @@ export type server = {
 const ignoreList = ["205.174.149.108"];
 
 const [servers, { refetch }] = createResource(async () => {
-  let playercount = 0;
+  let normalCount = 0;
+  let fwCount = 0;
   const serverList: server[] = await (
     await fetch(`https://jpxs.io/api/servers`)
   ).json();
@@ -37,18 +41,19 @@ const [servers, { refetch }] = createResource(async () => {
     .filter((server) => !ignoreList.includes(server.address))
     .map((server) => {
       server.name = `${server.emoji} ${server.name}`;
-      playercount += server.players;
       if (server.masterServer == "jpxs") {
+        fwCount += server.players;
         server.build = `${server.build}`;
         server.icon =
           server.icon || "https://assets.jpxs.io/img/default/freeweekend.png";
       } else {
+        normalCount += server.players;
         server.icon =
           server.icon || "https://assets.jpxs.io/img/default/subrosa.png";
       }
       return server;
     });
-  setPlayerCount(playercount);
+  setPlayerCount({ fw: fwCount, normal: normalCount });
   return serverList;
 });
 

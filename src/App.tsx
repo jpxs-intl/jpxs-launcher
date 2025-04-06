@@ -51,10 +51,18 @@ function LoadingComponent(props: { ref?: HTMLDialogElement }) {
   );
 }
 let updateDialog!: HTMLDialogElement;
-
+let [updateMessage, setUpdateMessage] = createSignal("");
 export async function checkUpdates() {
   const val = await check();
   if (val) {
+    const json = await (
+      await fetch(
+        "https://api.github.com/repos/jpxs-intl/jpxs-launcher/releases/latest"
+      )
+    ).json();
+    const desc = json.body.replace(/\r\n/g, "<br />");
+    setUpdateMessage(desc);
+    console.log(desc);
     updateDialog.showModal();
     return true;
   } else {
@@ -108,37 +116,40 @@ function App() {
     >
       <main class="">
         <LoadingComponent ref={downloadingDialog} />
-        <dialog ref={updateDialog} class="rounded-xl bg-crust">
+        <dialog ref={updateDialog} class="rounded-xl bg-crust min-w-96">
           <div class="bg-crust rounded-xl py-4 px-4 text-center text-text">
             <h1 class="font-bold text-3xl">Update Found!</h1>
-            <p class="pt-2 pb-4">Would you like to update?</p>
-            <button
-              class="rounded-lg bg-surface0 hover:bg-mantle transition-colors px-2 py-1"
-              onClick={() => {
-                downloadingDialog.showModal();
-                const newSettings = settings()!;
-                newSettings.checkUpdateAutomatically = !checkboxRef.checked;
-                SettingsManager.saveSettings(newSettings);
-                invoke("update_app");
-              }}
-            >
-              Yes
-            </button>
-            <button
-              class="rounded-lg bg-surface0 hover:bg-mantle transition-colors px-2 py-1 mx-2"
-              onClick={() => {
-                const newSettings = settings()!;
-                newSettings.checkUpdateAutomatically = !checkboxRef.checked;
-                SettingsManager.saveSettings(newSettings);
-                updateDialog.close();
-              }}
-            >
-              No
-            </button>
+            <p class="pt-2 pb-1">Would you like to update?</p>
+            <p class="pb-4" innerHTML={updateMessage()}></p>
+            <section class="flex flex-row gap-x-1">
+              <button
+                class="rounded-lg bg-surface0 hover:bg-mantle transition-colors px-2 py-1 grow"
+                onClick={() => {
+                  downloadingDialog.showModal();
+                  const newSettings = settings()!;
+                  newSettings.checkUpdateAutomatically = !checkboxRef.checked;
+                  SettingsManager.saveSettings(newSettings);
+                  invoke("update_app");
+                }}
+              >
+                Yes
+              </button>
+              <button
+                class="rounded-lg bg-surface0 hover:bg-mantle transition-colors px-2 py-1 mx-2 grow-1"
+                onClick={() => {
+                  const newSettings = settings()!;
+                  newSettings.checkUpdateAutomatically = !checkboxRef.checked;
+                  SettingsManager.saveSettings(newSettings);
+                  updateDialog.close();
+                }}
+              >
+                No
+              </button>
+            </section>
             <p class="mt-4 flex flex-row justify-center items-center text-center">
               Do Not Show Again:{" "}
               <input
-                class="w-4 h-4 bg-surface0"
+                class="w-4 h-4 bg-surface0 mx-1 rounded-full transition-colors appearance-none checked:bg-green"
                 type="checkbox"
                 ref={checkboxRef}
               />
