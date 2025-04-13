@@ -35,7 +35,13 @@ const [servers, { refetch }] = createResource(async () => {
   let normalCount = 0;
   let fwCount = 0;
   const serverList: server[] = await (
-    await fetch(`https://jpxs.io/api/servers`)
+    await fetch(`https://jpxs.io/api/servers`).catch(() => {
+      return {
+        json: () => {
+          return [];
+        },
+      };
+    })
   ).json();
   serverList
     .filter((server) => !ignoreList.includes(server.address))
