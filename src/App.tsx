@@ -60,10 +60,13 @@ export async function checkUpdates() {
         "https://api.github.com/repos/jpxs-intl/jpxs-launcher/releases/latest"
       )
     ).json();
-    const desc = json.body.replace(/\r\n/g, "<br />");
-    setUpdateMessage(desc);
-    updateDialog.showModal();
-    return true;
+    // fix update checker being dumb
+    if (json.tag_name !== `v${await invoke("get_version")}`) {
+      const desc = json.body.replace(/\r\n/g, "<br />");
+      setUpdateMessage(desc);
+      updateDialog.showModal();
+      return true;
+    }
   } else {
     console.log("No update");
     return false;
