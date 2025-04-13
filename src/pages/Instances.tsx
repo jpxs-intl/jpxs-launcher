@@ -11,6 +11,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { InstanceComponent } from "../components/InstanceComponent";
 import OpenSteamDialog from "../components/OpenSteamDialog";
 
+const [errorReason, setErrorReason] = createSignal("");
 function LoadingComponent() {
   let totalSize = 0;
   const [progress, setProgress] = createSignal(0);
@@ -100,6 +101,7 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
               <option value={37}>37</option>
               <option value={36}>36</option>
               <option value={34}>34</option>
+              <option value={29}>29</option>
               <option value={25}>25</option>
               <option value={24}>24</option>
             </select>
@@ -143,12 +145,20 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
                   version: parseInt(version),
                   isFreeWeekend: !(parseInt(version) === 24),
                 });
-                if (promise) {
-                  promise.then(() => {
-                    dialog.close();
-                    SettingsManager.saveSettings();
-                  });
-                }
+
+                promise?.then(() => {
+                  dialog.close();
+                  SettingsManager.saveSettings();
+                });
+
+                promise?.catch((reason) => {
+                  dialog.close();
+                  setErrorReason(reason)(
+                    document.querySelector(
+                      "#instanceDownloadError"
+                    ) as HTMLDialogElement
+                  ).showModal();
+                });
               }
             }}
           >
@@ -230,7 +240,9 @@ function InstanceImportComponent() {
               <option value={37}>37</option>
               <option value={36}>36</option>
               <option value={34}>34</option>
+              <option value={29}>29</option>
               <option value={25}>25</option>
+              <option value={24}>24</option>
             </select>
           </h2>
           <p class="flex flex-row items-center gap-x-1">
@@ -312,6 +324,13 @@ export default function () {
       <InstanceImportComponent />
       <OpenSteamDialog />
       <Sidebar />
+      <dialog id="instanceDownloadError">
+        <div class="bg-crust rounded-2xl p-8 flex flex-col">
+          <h1 class="text-3xl font-bold pb-4">Failed Downloading Instance</h1>
+          <p class="text-subtext1 text-lg">{errorReason()}</p>
+          <p>Report this error in the JPXS Discord.</p>
+        </div>
+      </dialog>
       <section class="ml-72 mr-12">
         <h1 class="text-center text-3xl font-bold pt-12 pb-8">Instances</h1>
         <hr class="border-surface0" />

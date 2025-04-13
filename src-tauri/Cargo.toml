@@ -1,6 +1,6 @@
 [package]
 name = "jpxs-launcher"
-version = "0.5.0"
+version = "0.5.1"
 description = "A Launcher for Sub Rosa Free Weekend versions."
 authors = ["you"]
 edition = "2021"

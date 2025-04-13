@@ -62,7 +62,6 @@ export async function checkUpdates() {
     ).json();
     const desc = json.body.replace(/\r\n/g, "<br />");
     setUpdateMessage(desc);
-    console.log(desc);
     updateDialog.showModal();
     return true;
   } else {
