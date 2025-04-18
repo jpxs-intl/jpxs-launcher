@@ -1,5 +1,6 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import Sidebar from "../components/Sidebar";
+import Fuse from "fuse.js";
 type player = {
   name: string;
   gameId: number;
@@ -14,9 +15,7 @@ type response =
       success: true;
       error: string;
       searchMode: string;
-      players: {
-        0: player;
-      };
+      players: player[];
     }
   | {
       success: false;
@@ -24,6 +23,17 @@ type response =
       searchMode: string;
     };
 
+const fuse = new Fuse<player>([], {
+  keys: [
+    { name: "name", weight: 0.7 },
+    { name: "phoneNumber", weight: 0.5 },
+    { name: "steamId", weight: 0.5 },
+    { name: "gameId", weight: 0.5 },
+    { name: "nameHistory.name", weight: 0.3 },
+  ],
+  threshold: 0.4,
+  distance: 10,
+});
 function dateToString(date: Date, relative?: boolean) {
   const day = date.getDate();
   const month = date.getMonth() + 1;
@@ -50,34 +60,13 @@ function dateToString(date: Date, relative?: boolean) {
 
 export default function () {
   const [error, setError] = createSignal<string>();
-  const [player, setPlayer] = createSignal<player>();
+  const [playerList, setPlayerList] = createSignal<player[]>();
   let inputRef!: HTMLInputElement;
-  // https://avatars.jpxs.io/karl?size=256
   return (
     <>
       <Sidebar />
       <section class="ml-64 flex flex-col items-center">
         <h1 class="font-bold text-3xl pt-12 pb-8 text-center">Player Search</h1>
-        <Show when={player()}>
-          <div class="bg-crust px-4 py-4 rounded-xl flex flex-row gap-x-2">
-            <img
-              class="w-32 h-32 place-self-center"
-              src={`https://avatars.jpxs.io/${player()!.phoneNumber}?size=128`}
-            />
-            <div>
-              <h1 class="font-bold text-2xl">{player()!.name}</h1>
-              <div class="text-left">
-                <p>Phone Number: {player()!.phoneNumber}</p>
-                <p>Game ID: {player()!.gameId}</p>
-                <p>Steam ID: {player()!.steamId}</p>
-                <p>First seen: {dateToString(new Date(player()!.firstSeen))}</p>
-                <p>
-                  Last seen: {dateToString(new Date(player()!.lastSeen), true)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Show>
         <p class="text-center my-2">
           <input
             ref={inputRef}
@@ -98,7 +87,16 @@ export default function () {
             ).then(async (val) => {
               const json: response = await val.json();
               if (json.success) {
-                setPlayer(json.players[0]);
+                console.log(json);
+                fuse.setCollection(json.players);
+                setPlayerList(
+                  fuse
+                    .search(inputRef.value, {
+                      limit: 5,
+                    })
+                    .map((val) => val.item)
+                );
+                console.log(playerList());
                 setError();
               } else {
                 setError(json.error);
@@ -108,6 +106,35 @@ export default function () {
         >
           Search
         </button>
+        <Show when={playerList()}>
+          <div class="flex flex-col gap-y-2 my-2">
+            <For each={playerList()}>
+              {(player) => (
+                <div class="bg-crust px-4 py-4 rounded-xl flex flex-row gap-x-2">
+                  <img
+                    class="w-32 h-32 place-self-center"
+                    src={`https://avatars.jpxs.io/${player.phoneNumber}?size=128`}
+                  />
+                  <div>
+                    <h1 class="font-bold text-2xl">{player.name}</h1>
+                    <div class="text-left">
+                      <p>Phone Number: {player.phoneNumber}</p>
+                      <p>Game ID: {player.gameId}</p>
+                      <p>Steam ID: {player.steamId}</p>
+                      <p>
+                        First seen: {dateToString(new Date(player.firstSeen))}
+                      </p>
+                      <p>
+                        Last seen:{" "}
+                        {dateToString(new Date(player.lastSeen), true)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </For>
+          </div>
+        </Show>
       </section>
     </>
   );
