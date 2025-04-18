@@ -1,6 +1,8 @@
 import { createSignal, For, Show } from "solid-js";
 import Sidebar from "../components/Sidebar";
 import Fuse from "fuse.js";
+import { Icon } from "solid-heroicons";
+import { arrowDown, arrowUp } from "solid-heroicons/outline";
 type player = {
   name: string;
   gameId: number;
@@ -60,6 +62,7 @@ function dateToString(date: Date, relative?: boolean) {
 
 export default function () {
   const [error, setError] = createSignal<string>();
+  const [expanded, setExpanded] = createSignal(false);
   const [playerList, setPlayerList] = createSignal<player[]>();
   let inputRef!: HTMLInputElement;
   return (
@@ -108,31 +111,55 @@ export default function () {
         </button>
         <Show when={playerList()}>
           <div class="flex flex-col gap-y-2 my-2">
-            <For each={playerList()}>
-              {(player) => (
-                <div class="bg-crust px-4 py-4 rounded-xl flex flex-row gap-x-2">
-                  <img
-                    class="w-32 h-32 place-self-center"
-                    src={`https://avatars.jpxs.io/${player.phoneNumber}?size=128`}
-                  />
-                  <div>
-                    <h1 class="font-bold text-2xl">{player.name}</h1>
-                    <div class="text-left">
-                      <p>Phone Number: {player.phoneNumber}</p>
-                      <p>Game ID: {player.gameId}</p>
-                      <p>Steam ID: {player.steamId}</p>
-                      <p>
-                        First seen: {dateToString(new Date(player.firstSeen))}
-                      </p>
-                      <p>
-                        Last seen:{" "}
-                        {dateToString(new Date(player.lastSeen), true)}
-                      </p>
+            <For
+              each={(() => {
+                if (expanded()) {
+                  return playerList();
+                } else {
+                  return playerList()?.slice(0, 1);
+                }
+              })()}
+            >
+              {(player, index) => {
+                if (!expanded()) {
+                  if (index() > 0) return <></>;
+                }
+                return (
+                  <div class="bg-crust px-4 py-4 rounded-xl flex flex-row gap-x-2">
+                    <img
+                      class="w-32 h-32 place-self-center"
+                      src={`https://avatars.jpxs.io/${player.phoneNumber}?size=128`}
+                    />
+                    <div>
+                      <h1 class="font-bold text-2xl">{player.name}</h1>
+                      <div class="text-left">
+                        <p>Phone Number: {player.phoneNumber}</p>
+                        <p>Game ID: {player.gameId}</p>
+                        <p>Steam ID: {player.steamId}</p>
+                        <p>
+                          First seen: {dateToString(new Date(player.firstSeen))}
+                        </p>
+                        <p>
+                          Last seen:{" "}
+                          {dateToString(new Date(player.lastSeen), true)}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              }}
             </For>
+            <button
+              class="flex flex-row-reverse gap-x-2 justify-self-center"
+              onClick={() => setExpanded(!expanded())}
+            >
+              <Icon
+                path={expanded() ? arrowUp : arrowDown}
+                width={24}
+                height={24}
+              />
+              <p>{expanded() ? "Minimize" : "Expand"}</p>
+            </button>
           </div>
         </Show>
       </section>

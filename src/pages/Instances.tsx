@@ -261,10 +261,10 @@ function InstanceImportComponent() {
               const version = parseInt(versionRef.value);
               const isFreeWeekend = freeWeekendRef!.checked;
               invoke("is_instance_command", { path: path })
-                .then(() => {
+                .then(async () => {
                   setInvalidInstance(false);
                   let name;
-                  if (path.lastIndexOf("/") === -1) {
+                  if (await invoke("is_windows")) {
                     // windows
                     name = path.slice(path.lastIndexOf("\\") + 1);
                   } else {

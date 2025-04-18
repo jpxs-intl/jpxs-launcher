@@ -23,17 +23,21 @@ class InstanceManagerConstructor {
     });
   }
 
-  addInstance(instance: Instance) {
+  async addInstance(instance: Instance) {
     if (this.settings) {
       if (!instance.path) {
-        instance.path = `${this.settings.installLocation}/${instance.name}`;
+        if (await invoke("is_windows")) {
+          instance.path = `${this.settings.installLocation}\\${instance.name}`;
+        } else {
+          instance.path = `${this.settings.installLocation}/${instance.name}`;
+        }
       }
       this.instances.unshift(instance);
       this.settings.instances = this.instances;
       this.listeners.forEach((val) => {
         val(this.instances);
       });
-      return invoke("download_instance_command", {
+      return await invoke("download_instance_command", {
         instance: convertInstanceToRust(instance),
       });
     } else {

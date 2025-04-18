@@ -73,6 +73,11 @@ fn get_version() -> String {
 }
 
 #[tauri::command]
+fn is_windows() -> bool {
+    cfg!(windows)
+}
+
+#[tauri::command]
 async fn update_app(app: AppHandle) -> Result<(), Error> {
     if let Some(update) =  app.updater()?.check().await? {
         let mut downloaded = 0;
@@ -112,7 +117,8 @@ pub fn run() {
             open_settings_command,
             update_app,
             get_version,
-            is_steam_open
+            is_steam_open,
+            is_windows
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
