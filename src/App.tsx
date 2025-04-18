@@ -55,7 +55,7 @@ let [updateMessage, setUpdateMessage] = createSignal("");
 export async function checkUpdates() {
   const val = await check();
   if (val) {
-    const json = await (
+    const json: { body: string; tag_name: string } = await (
       await fetch(
         "https://api.github.com/repos/jpxs-intl/jpxs-launcher/releases/latest"
       )
