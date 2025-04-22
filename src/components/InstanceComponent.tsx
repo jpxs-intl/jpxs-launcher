@@ -7,7 +7,7 @@ import { setActiveInstance } from "./OpenSteamDialog";
 const buildNumbers = new Map<number, string>([
   [99, "f"],
   [38, "f"],
-  [37, "c"],
+  [37, "d"],
   [36, "b"],
   [34, "b"],
   [29, "a"],

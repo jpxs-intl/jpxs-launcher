@@ -59,7 +59,6 @@ class InstanceManagerConstructor {
 
   openInstance(instance: Instance) {
     if (this.settings) {
-      console.log(instance);
       this.settings.lastPlayed = instance.name;
       SettingsManager.saveSettings();
       invoke("open_instance_command", {
