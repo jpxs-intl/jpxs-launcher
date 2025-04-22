@@ -110,13 +110,16 @@ pub async fn delete_instance(instance: Instance) -> Result<(), Error> {
     Ok(std::fs::remove_dir_all(instance.path)?)
 }
 
-pub fn open_instance(instance: Instance) -> () {
+pub fn open_instance(instance: Instance) -> Result<(), Error> {
     #[cfg(target_os = "windows")]
     let game_exe = "./subrosa.exe";
     #[cfg(target_os = "linux")]
     let game_exe = "./subrosa.x64";
 
     let exe_path = instance.path.join(game_exe);
+    if !exe_path.exists() {
+        return Err(Error::GameExecutableNotFoundError);
+    }
     let mut command = Command::new(exe_path);
 
     #[cfg(target_os = "linux")] {
@@ -126,5 +129,6 @@ pub fn open_instance(instance: Instance) -> () {
     }
 
     command.current_dir(instance.path);
-    command.spawn().expect("Failed to execute process");        
+    command.spawn().expect("Failed to execute process");
+    Ok(())     
 }

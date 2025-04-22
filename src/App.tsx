@@ -11,7 +11,8 @@ import { check } from "@tauri-apps/plugin-updater";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { SettingsManager } from "./SettingsManager";
-
+const [errorReason, setErrorReason] = createSignal("");
+const [errorTitle, setErrorTitle] = createSignal("");
 function LoadingComponent(props: { ref?: HTMLDialogElement }) {
   let totalSize = 0;
   const [progress, setProgress] = createSignal(0);
@@ -161,6 +162,29 @@ function App() {
             </p>
           </div>
         </dialog>
+        <dialog id="instanceDownloadError">
+          <div class="bg-crust rounded-2xl p-8 flex flex-col max-w-[36rem]">
+            <h1 class="text-3xl font-bold pb-4">{errorTitle()}</h1>
+            <p class="text-subtext1 text-lg">{errorReason()}</p>
+            <p>
+              Report this error in the JPXS Discord if you don't know how to fix
+              it.
+            </p>
+            <button
+              class="rounded-xl px-4 py-1 mt-4 text-text bg-surface0 hover:bg-mantle transition-colors"
+              onClick={() => {
+                const dialog = document.querySelector(
+                  "#instanceDownloadError"
+                ) as HTMLDialogElement;
+                dialog.close();
+                setErrorTitle("");
+                setErrorReason("");
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </dialog>
         <Router>
           <Route path="/" component={Home} />
           <Route path="/live" component={ServerList} />
@@ -175,3 +199,4 @@ function App() {
 }
 
 export default App;
+export { errorReason, setErrorReason, errorTitle, setErrorTitle };

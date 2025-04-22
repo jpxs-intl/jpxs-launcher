@@ -37,8 +37,8 @@ fn open_settings_command() -> Result<(), Error> {
 // instance commands
 
 #[tauri::command]
-fn open_instance_command(instance: Instance) -> () {
-    open_instance(instance);
+fn open_instance_command(instance: Instance) -> Result<(), Error> {
+    open_instance(instance)
 }
 
 #[tauri::command]

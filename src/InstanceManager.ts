@@ -5,6 +5,7 @@ import {
   Instance,
   convertInstanceToRust,
 } from "./SettingsManager";
+import { setErrorReason, setErrorTitle } from "./App";
 class InstanceManagerConstructor {
   private settings?: Settings;
   private instances: Instance[] = new Array();
@@ -25,7 +26,9 @@ class InstanceManagerConstructor {
 
   async addInstance(instance: Instance) {
     if (this.settings) {
+      let download = false;
       if (!instance.path) {
+        download = true;
         if (await invoke("is_windows")) {
           instance.path = `${this.settings.installLocation}\\${instance.name}`;
         } else {
@@ -37,17 +40,18 @@ class InstanceManagerConstructor {
       this.listeners.forEach((val) => {
         val(this.instances);
       });
-
-      return await invoke("download_instance_command", {
-        instance: convertInstanceToRust(instance),
-      }).then(
-        () => undefined,
-        (err) => {
-          console.error("Error downloading instance:", err);
-          this.deleteInstance(instance);
-          return err;
-        }
-      );
+      if (download) {
+        return await invoke("download_instance_command", {
+          instance: convertInstanceToRust(instance),
+        }).then(
+          () => undefined,
+          (err) => {
+            console.error("Error downloading instance:", err);
+            this.deleteInstance(instance);
+            return err;
+          }
+        );
+      }
     } else {
       console.error("Settings not loaded");
     }
@@ -55,11 +59,20 @@ class InstanceManagerConstructor {
 
   openInstance(instance: Instance) {
     if (this.settings) {
-      invoke("open_instance_command", {
-        instance: convertInstanceToRust(instance),
-      });
+      console.log(instance);
       this.settings.lastPlayed = instance.name;
       SettingsManager.saveSettings();
+      invoke("open_instance_command", {
+        instance: convertInstanceToRust(instance),
+      }).catch((err) => {
+        setErrorTitle("Failed to open instance");
+        setErrorReason(
+          `${err} This is usually caused by a corrupted instance. Try deleting the instance and re-adding it.`
+        );
+        (
+          document.querySelector("#instanceDownloadError") as HTMLDialogElement
+        ).showModal();
+      });
     }
     this.listeners.forEach((callback) => {
       callback(this.instances);

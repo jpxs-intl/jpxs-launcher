@@ -11,7 +11,9 @@ pub enum Error {
     #[error(transparent)]
     UpdaterError(#[from] tauri_plugin_updater::Error),
     #[error(transparent)]
-    FsError(#[from] fs_extra::error::Error)
+    FsError(#[from] fs_extra::error::Error),
+    #[error("Game Executable Not Found.")]
+    GameExecutableNotFoundError,
 }
 
 impl serde::Serialize for Error {

@@ -10,8 +10,8 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { InstanceComponent } from "../components/InstanceComponent";
 import OpenSteamDialog from "../components/OpenSteamDialog";
+import { setErrorReason, setErrorTitle } from "../App";
 
-const [errorReason, setErrorReason] = createSignal("");
 function LoadingComponent() {
   let totalSize = 0;
   const [progress, setProgress] = createSignal(0);
@@ -150,6 +150,7 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
                   dialog.close();
                   if (typeof val === "string") {
                     // to-do: delete instance if error
+                    setErrorTitle("Failed Downloading Instance");
                     setErrorReason(val);
                     (
                       document.querySelector(
@@ -163,6 +164,7 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
 
                 promise?.catch((reason) => {
                   dialog.close();
+                  setErrorTitle("Failed Downloading Instance");
                   setErrorReason(reason);
                   (
                     document.querySelector(
@@ -340,13 +342,7 @@ export default function () {
       <InstanceImportComponent />
       <OpenSteamDialog />
       <Sidebar />
-      <dialog id="instanceDownloadError">
-        <div class="bg-crust rounded-2xl p-8 flex flex-col">
-          <h1 class="text-3xl font-bold pb-4">Failed Downloading Instance</h1>
-          <p class="text-subtext1 text-lg">{errorReason()}</p>
-          <p>Report this error in the JPXS Discord.</p>
-        </div>
-      </dialog>
+
       <section class="ml-72 mr-12">
         <h1 class="text-center text-3xl font-bold pt-12 pb-8">Instances</h1>
         <hr class="border-surface0" />
