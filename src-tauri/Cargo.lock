@@ -2068,7 +2068,7 @@ dependencies = [
 
 [[package]]
 name = "jpxs-launcher"
-version = "0.5.3"
+version = "0.5.4"
 dependencies = [
  "fs_extra",
  "futures-util",

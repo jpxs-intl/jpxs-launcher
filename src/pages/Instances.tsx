@@ -146,14 +146,25 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
                   isFreeWeekend: !(parseInt(version) === 24),
                 });
 
-                promise?.then(() => {
+                promise?.then((val) => {
                   dialog.close();
-                  SettingsManager.saveSettings();
+                  if (typeof val === "string") {
+                    // to-do: delete instance if error
+                    setErrorReason(val);
+                    (
+                      document.querySelector(
+                        "#instanceDownloadError"
+                      ) as HTMLDialogElement
+                    ).showModal();
+                  } else {
+                    SettingsManager.saveSettings();
+                  }
                 });
 
                 promise?.catch((reason) => {
                   dialog.close();
-                  setErrorReason(reason)(
+                  setErrorReason(reason);
+                  (
                     document.querySelector(
                       "#instanceDownloadError"
                     ) as HTMLDialogElement
@@ -278,6 +289,11 @@ function InstanceImportComponent() {
                     isFreeWeekend: isFreeWeekend,
                   });
                   SettingsManager.saveSettings();
+                  (
+                    document.querySelector(
+                      "#instanceImportDialog"
+                    ) as HTMLDialogElement
+                  ).close();
                 })
                 .catch(() => {
                   setInvalidInstance(true);

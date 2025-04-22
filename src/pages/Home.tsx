@@ -30,7 +30,7 @@ export default function () {
         <div class="bg-surface0 w-[2px] h-72 my-16"></div>
         <div class="my-16">
           <h1 class="text-3xl font-bold pb-4 mx-4">Welcome</h1>
-          <Show when={lastPlayed() !== null}>
+          <Show when={lastPlayed() !== null && !noInstances()}>
             <h3 class="text-left pt-1 mx-4">You last played...</h3>
             <InstanceComponent
               class="ml-2"

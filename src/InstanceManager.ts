@@ -37,9 +37,17 @@ class InstanceManagerConstructor {
       this.listeners.forEach((val) => {
         val(this.instances);
       });
+
       return await invoke("download_instance_command", {
         instance: convertInstanceToRust(instance),
-      });
+      }).then(
+        () => undefined,
+        (err) => {
+          console.error("Error downloading instance:", err);
+          this.deleteInstance(instance);
+          return err;
+        }
+      );
     } else {
       console.error("Settings not loaded");
     }
