@@ -118,7 +118,10 @@ function App() {
     >
       <main class="">
         <LoadingComponent ref={downloadingDialog} />
-        <dialog ref={updateDialog} class="rounded-xl bg-crust min-w-96">
+        <dialog
+          ref={updateDialog}
+          class="rounded-xl bg-crust min-w-96 max-w-[36rem]"
+        >
           <div class="bg-crust rounded-xl py-4 px-4 text-center text-text">
             <h1 class="font-bold text-3xl">Update Found!</h1>
             <p class="pt-2 pb-1">Would you like to update?</p>
