@@ -10,6 +10,7 @@ type player = {
   firstSeen: string;
   lastSeen: string;
   steamId: string;
+  nameHistory: Array<{ name: string }>;
 };
 
 type response =
@@ -59,7 +60,34 @@ function dateToString(date: Date, relative?: boolean) {
   }
   return `${month}/${day}/${year}`;
 }
-
+function Player(props: { player: player }) {
+  const player = props.player;
+  return (
+    <div class="bg-crust px-4 py-4 rounded-xl flex flex-row gap-x-2">
+      <img
+        class="w-32 h-32 place-self-center"
+        src={`https://avatars.jpxs.io/${player.phoneNumber}?size=128`}
+      />
+      <div>
+        <h1
+          class="font-bold text-2xl"
+          title={`Also Known As: ${player.nameHistory
+            .map((val) => val.name)
+            .join(", ")}`}
+        >
+          {player.name}
+        </h1>
+        <div class="text-left">
+          <p>Phone Number: {player.phoneNumber}</p>
+          <p>Game ID: {player.gameId}</p>
+          <p>Steam ID: {player.steamId}</p>
+          <p>First seen: {dateToString(new Date(player.firstSeen))}</p>
+          <p>Last seen: {dateToString(new Date(player.lastSeen), true)}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 export default function () {
   const [error, setError] = createSignal<string>();
   const [expanded, setExpanded] = createSignal(false);
@@ -124,29 +152,7 @@ export default function () {
                 if (!expanded()) {
                   if (index() > 0) return <></>;
                 }
-                return (
-                  <div class="bg-crust px-4 py-4 rounded-xl flex flex-row gap-x-2">
-                    <img
-                      class="w-32 h-32 place-self-center"
-                      src={`https://avatars.jpxs.io/${player.phoneNumber}?size=128`}
-                    />
-                    <div>
-                      <h1 class="font-bold text-2xl">{player.name}</h1>
-                      <div class="text-left">
-                        <p>Phone Number: {player.phoneNumber}</p>
-                        <p>Game ID: {player.gameId}</p>
-                        <p>Steam ID: {player.steamId}</p>
-                        <p>
-                          First seen: {dateToString(new Date(player.firstSeen))}
-                        </p>
-                        <p>
-                          Last seen:{" "}
-                          {dateToString(new Date(player.lastSeen), true)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
+                return <Player player={player} />;
               }}
             </For>
             <button
