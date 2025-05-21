@@ -82,7 +82,9 @@ function Player(props: { player: player }) {
           <p>Game ID: {player.gameId}</p>
           <p>Steam ID: {player.steamId}</p>
           <p>First seen: {dateToString(new Date(player.firstSeen))}</p>
-          <p>Last seen: {dateToString(new Date(player.lastSeen), true)}</p>
+          <p title={dateToString(new Date(player.lastSeen))}>
+            Last seen: {dateToString(new Date(player.lastSeen), true)}
+          </p>
         </div>
       </div>
     </div>
