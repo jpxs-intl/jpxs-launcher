@@ -1,6 +1,12 @@
 import { Icon } from "solid-heroicons";
 import Sidebar from "../components/Sidebar";
-import { trash, plus, documentPlus, folderOpen } from "solid-heroicons/outline";
+import {
+  trash,
+  plus,
+  documentPlus,
+  folderOpen,
+  check,
+} from "solid-heroicons/outline";
 import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import { Instance, SettingsManager } from "../SettingsManager";
 import { InstanceManager } from "../InstanceManager";
@@ -47,13 +53,24 @@ function LoadingComponent() {
         <p class="text-subtext0" ref={loadingTextHref!}>{`
           ${(progress() / 1000000).toFixed(2)}
         /${(totalSize / 1000000).toFixed(2)}MB`}</p>
+        <p class="text-subtext1">Sometimes this can take a while.</p>
       </div>
     </dialog>
   );
 }
 
+function checkForValidInstanceName(name: string) {
+  const result = name.match(/[^\x00-\x7F]/);
+  if (result) {
+    return result.length == 0;
+  } else {
+    return true;
+  }
+}
+
 function CreateInstanceComponent(props: { instances: Instance[] }) {
   const [instanceTaken, setInstanceTaken] = createSignal(false);
+  const [errorText, setErrorText] = createSignal("");
   return (
     <dialog
       id="instanceCreationDialog"
@@ -87,7 +104,7 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
               id="instanceNameInput"
             ></input>
             <p class={`text-red ${instanceTaken() ? "" : "hidden"}`}>
-              Instance already exists!
+              {errorText()}
             </p>
           </h2>
           <h2>
@@ -107,7 +124,8 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
             </select>
           </h2>
           <p class="text-subtext0 ">
-            Note: You cannot change instance name after creating it.
+            Note: You cannot change instance name after creating it. It does not
+            need to be a server name.
           </p>
           <button
             class="bg-surface0 hover:bg-mantle transition-colors px-4 py-2 rounded-lg"
@@ -129,50 +147,58 @@ function CreateInstanceComponent(props: { instances: Instance[] }) {
 
               if (instanceExists) {
                 setInstanceTaken(true);
-              } else {
-                setInstanceTaken(false);
-                (
-                  document.querySelector(
-                    "#instanceCreationDialog"
-                  ) as HTMLDialogElement
-                ).close();
-                const dialog = document.querySelector(
-                  "#instanceDownloadingDialog"
-                ) as HTMLDialogElement;
-                dialog.showModal();
-                const promise = InstanceManager.addInstance({
-                  name: name,
-                  version: parseInt(version),
-                  isFreeWeekend: !(parseInt(version) === 24),
-                });
+                setErrorText("Instance already exists!");
+                return;
+              }
 
-                promise?.then((val) => {
-                  dialog.close();
-                  if (typeof val === "string") {
-                    // to-do: delete instance if error
-                    setErrorTitle("Failed Downloading Instance");
-                    setErrorReason(val);
-                    (
-                      document.querySelector(
-                        "#instanceDownloadError"
-                      ) as HTMLDialogElement
-                    ).showModal();
-                  } else {
-                    SettingsManager.saveSettings();
-                  }
-                });
+              if (!checkForValidInstanceName(name)) {
+                setInstanceTaken(true);
+                setErrorText("Invalid Instance Name.");
+                return;
+              }
 
-                promise?.catch((reason) => {
-                  dialog.close();
+              setInstanceTaken(false);
+              (
+                document.querySelector(
+                  "#instanceCreationDialog"
+                ) as HTMLDialogElement
+              ).close();
+              const dialog = document.querySelector(
+                "#instanceDownloadingDialog"
+              ) as HTMLDialogElement;
+              dialog.showModal();
+              const promise = InstanceManager.addInstance({
+                name: name,
+                version: parseInt(version),
+                isFreeWeekend: !(parseInt(version) === 24),
+              });
+
+              promise?.then((val) => {
+                dialog.close();
+                if (typeof val === "string") {
+                  // to-do: delete instance if error
                   setErrorTitle("Failed Downloading Instance");
-                  setErrorReason(reason);
+                  setErrorReason(val);
                   (
                     document.querySelector(
                       "#instanceDownloadError"
                     ) as HTMLDialogElement
                   ).showModal();
-                });
-              }
+                } else {
+                  SettingsManager.saveSettings();
+                }
+              });
+
+              promise?.catch((reason) => {
+                dialog.close();
+                setErrorTitle("Failed Downloading Instance");
+                setErrorReason(reason);
+                (
+                  document.querySelector(
+                    "#instanceDownloadError"
+                  ) as HTMLDialogElement
+                ).showModal();
+              });
             }}
           >
             Create Instance
@@ -188,6 +214,7 @@ function InstanceImportComponent() {
   let versionRef!: HTMLSelectElement;
   let freeWeekendRef!: HTMLInputElement;
   const [invalidInstance, setInvalidInstance] = createSignal(false);
+  const [errorText, setErrorText] = createSignal("");
   return (
     <dialog
       class="rounded-xl bg-crust"
@@ -237,9 +264,7 @@ function InstanceImportComponent() {
                 ></p>
               </button>
             </p>
-            <p class={`text-red ${invalidInstance() ? "" : "hidden"}`}>
-              Invalid Instance Path
-            </p>
+            <p class={`text-red ${invalidInstance() ? "" : "hidden"}`}></p>
           </div>
 
           <h2>
@@ -275,7 +300,6 @@ function InstanceImportComponent() {
               const isFreeWeekend = freeWeekendRef!.checked;
               invoke("is_instance_command", { path: path })
                 .then(async () => {
-                  setInvalidInstance(false);
                   let name;
                   if (await invoke("is_windows")) {
                     // windows
@@ -284,6 +308,13 @@ function InstanceImportComponent() {
                     // linux
                     name = path.slice(path.lastIndexOf("/") + 1);
                   }
+
+                  if (!checkForValidInstanceName(name)) {
+                    setInvalidInstance(true);
+                    setErrorText("Invalid Instance Name.");
+                  }
+                  setInvalidInstance(false);
+
                   InstanceManager.addInstance({
                     name: name,
                     path: path,
@@ -299,6 +330,7 @@ function InstanceImportComponent() {
                 })
                 .catch(() => {
                   setInvalidInstance(true);
+                  setErrorText("Invalid Instance Path");
                 });
             }}
           >
