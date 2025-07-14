@@ -380,7 +380,8 @@ export default function () {
         <hr class="border-surface0" />
         <p class="mt-2 text-subtext0 text-sm">
           Instances are game versions you can install. You can create multiple
-          instances of the same or different game versions.
+          instances of the same or different game versions. Click on an instance
+          to launch it.
         </p>
         <div class="flex flex-row mt-2 gap-x-2 xl:gap-x-4">
           <button

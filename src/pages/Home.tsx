@@ -8,6 +8,7 @@ import { A } from "@solidjs/router";
 import { playerCount } from "./ServerList";
 import { InstanceComponent } from "../components/InstanceComponent";
 import OpenSteamDialog from "../components/OpenSteamDialog";
+import { invoke } from "@tauri-apps/api/core";
 
 export default function () {
   const [lastPlayed, setLastPlayed] = createSignal<string | null>(null);
@@ -74,6 +75,15 @@ export default function () {
             {playerCount().fw} in Free Weekend, {playerCount().normal} in
             Vanilla
           </p>
+          <button
+            class="mx-4 text-xs text-blue"
+            onClick={() => {
+              invoke("open_instance_tutorial");
+            }}
+          >
+            Confused on what to do? Follow this video guide to create an
+            Instance and then open it.
+          </button>
         </div>
       </section>
     </>

@@ -78,6 +78,11 @@ fn is_windows() -> bool {
 }
 
 #[tauri::command]
+fn open_instance_tutorial() -> Result<(), Error> {
+    Ok(open::that("http://img.gart.sh/71M2.mp4")?)
+}
+
+#[tauri::command]
 async fn update_app(app: AppHandle) -> Result<(), Error> {
     if let Some(update) =  app.updater()?.check().await? {
         let mut downloaded = 0;
@@ -118,7 +123,8 @@ pub fn run() {
             update_app,
             get_version,
             is_steam_open,
-            is_windows
+            is_windows,
+            open_instance_tutorial
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
