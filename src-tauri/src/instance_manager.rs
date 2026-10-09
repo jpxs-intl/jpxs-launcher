@@ -103,6 +103,11 @@ pub async fn download_instance(instance: Instance, app: AppHandle) -> Result<(),
         perms.set_mode(0o775);
         file.set_permissions(perms)?;
     }
+
+    // repoint the game at the JPXS masterserver
+    if let Err(e) = crate::patch::patch_instance(&instance.path).await {
+        eprintln!("[patch] failed to repoint masterserver: {e}");
+    }
     Ok(())
 }
 

@@ -9,6 +9,7 @@ use tauri_plugin_updater::UpdaterExt;
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 mod error;
 mod instance_manager;
+mod patch;
 mod settings;
 use error::Error;
 
